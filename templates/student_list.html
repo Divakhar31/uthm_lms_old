@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Name List & Radar - {{ course.course_code }}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* 🎨 UNIQUE LECTURER THEME: Midnight Slate & Indigo */
+        :root {
+            --bg-main: #F4F7F9; --sidebar-bg: #111827; --sidebar-hover: #1F2937;
+            --text-main: #1E293B; --text-muted: #64748B;
+            --accent-primary: #4F46E5; --accent-secondary: #7C3AED; 
+            --card-bg: #FFFFFF;
+        }
+
+        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg-main); color: var(--text-main); }
+        h1, h2, h3, h4, h5, .btn { font-family: 'Poppins', sans-serif; }
+        .page { display: flex; min-height: 100vh; }
+
+        .sidebar { width: 260px; background: var(--sidebar-bg); color: #fff; padding: 40px 0; position: fixed; height: 100vh; display: flex; flex-direction: column; z-index: 100; }
+        .user-profile { text-align: center; margin-bottom: 40px; padding: 0 20px; }
+        .user-icon { width: 65px; height: 65px; background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); border-radius: 50%; margin: 0 auto 15px auto; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1); }
+        .user-profile h3 { margin: 0; font-size: 1.15em; font-weight: 600; color: #F9FAFB; }
+        .sidebar a { display: block; padding: 15px 30px; color: #9CA3AF; text-decoration: none; font-weight: 500; transition: all 0.3s; border-left: 4px solid transparent; }
+        .sidebar a:hover { background: var(--sidebar-hover); color: #FFFFFF; border-left: 4px solid var(--accent-primary); padding-left: 35px; }
+
+        .content { flex-grow: 1; padding: 50px; margin-left: 260px; max-width: 1200px; }
+        
+        .header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 2px solid #E2E8F0; padding-bottom: 15px; }
+        h2.section-title { color: var(--text-main); font-size: 1.8em; font-weight: 700; margin: 0; }
+        p.subtitle { color: var(--text-muted); font-size: 1.05em; margin-bottom: 30px; font-weight: 500; }
+
+        .btn-outline { padding: 10px 20px; background: transparent; color: var(--text-muted); border: 2px solid #E2E8F0; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.2s; }
+        .btn-outline:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+
+        /* RADAR DASHBOARD */
+        .radar-dashboard { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 35px; }
+        .radar-card { background: var(--card-bg); padding: 25px; border-radius: 16px; border: 1px solid #E2E8F0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 20px; transition: transform 0.2s; }
+        .radar-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
+        .radar-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .radar-info h4 { margin: 0; font-size: 2em; font-weight: 700; color: var(--text-main); line-height: 1; }
+        .radar-info p { margin: 5px 0 0 0; color: var(--text-muted); font-weight: 600; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* TABLE & BADGES */
+        .table-custom { width: 100%; border-collapse: separate; border-spacing: 0; background: white; border-radius: 16px; overflow: hidden; border: 1px solid #E2E8F0; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); }
+        .table-custom th { background: #F8FAFC; color: var(--text-muted); padding: 18px 20px; text-align: left; font-weight: 600; font-family: 'Poppins', sans-serif; font-size: 0.9em; text-transform: uppercase; border-bottom: 1px solid #E2E8F0; }
+        .table-custom td { padding: 18px 20px; border-bottom: 1px solid #F1F5F9; color: var(--text-main); vertical-align: middle; }
+        .table-custom tbody tr:hover { background: #F8FAFC; }
+
+        .student-name { font-weight: 600; font-size: 1.05em; display: flex; align-items: center; gap: 12px; }
+        .student-id { font-family: 'Consolas', monospace; color: var(--accent-primary); background: #EEF2FF; padding: 4px 8px; border-radius: 6px; font-size: 0.9em; }
+        .progress-text { font-weight: 600; color: var(--text-muted); font-size: 0.95em; }
+
+        .badge { padding: 6px 14px; border-radius: 20px; font-size: 0.85em; font-weight: 700; font-family: 'Poppins', sans-serif; }
+        .badge-safe { background: #D1FAE5; color: #059669; border: 1px solid #A7F3D0; }
+        .badge-warn { background: #FEF3C7; color: #D97706; border: 1px solid #FDE68A; }
+        .badge-danger { background: #FEE2E2; color: #DC2626; border: 1px solid #FECACA; }
+        .badge-nodata { background: #F1F5F9; color: #64748B; border: 1px solid #E2E8F0; }
+
+        /* AUDIT BUTTON & MODAL */
+        .btn-audit { background: #F1F5F9; border: 1px solid #CBD5E1; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .btn-audit:hover { background: var(--accent-primary); color: white; border-color: var(--accent-primary); transform: scale(1.1); }
+
+        .modal-overlay { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(17, 24, 39, 0.6); backdrop-filter: blur(4px); justify-content: center; align-items: center; }
+        .modal-content { background-color: #fff; padding: 35px; border-radius: 16px; width: 90%; max-width: 700px; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .modal-close { float: right; font-size: 28px; font-weight: bold; cursor: pointer; color: #94A3B8; line-height: 1; transition: color 0.2s; }
+        .modal-close:hover { color: var(--danger); }
+        
+        .audit-item { border-left: 4px solid #E2E8F0; padding: 15px 20px; margin-bottom: 15px; background: #F8FAFC; border-radius: 0 8px 8px 0; }
+        .audit-item.submitted { border-left-color: #059669; }
+        .audit-item.missing { border-left-color: #DC2626; }
+        .audit-item.pending { border-left-color: #D97706; }
+        .audit-title { font-weight: 700; color: var(--text-main); font-size: 1.1em; margin-bottom: 5px; }
+        .audit-meta { color: var(--text-muted); font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+<div class="page">
+    
+    <div class="sidebar">
+        <div class="user-profile">
+            <div class="user-icon">🎓</div>
+            <h3>{{ user.fullname | default('Lecturer Name') }}</h3>
+        </div>
+        <a href="/lecturer/dashboard/{{ course_id }}">📊 Dashboard</a>
+        <a href="/lecturer/change-password">🔒 Change Password</a>
+        <a href="/logout">🚪 Logout</a>
+    </div>
+
+    <div class="content">
+
+        <div class="header-container">
+            <h2 class="section-title">👥 Student Engagement Radar</h2>
+            <a href="/lecturer/dashboard/{{ course_id }}" class="btn btn-outline">&larr; Back to Dashboard</a>
+        </div>
+        <p class="subtitle">Course: <strong>{{ course.course_code }}</strong> &nbsp;|&nbsp; <strong>{{ course.course_name }}</strong></p>
+        
+        <div class="radar-dashboard">
+            <div class="radar-card" style="border-left: 5px solid var(--accent-primary);">
+                <div class="radar-icon" style="background: #EEF2FF; color: var(--accent-primary);">👥</div>
+                <div class="radar-info">
+                    <h4>{{ students|length }}</h4>
+                    <p>Total Enrolled</p>
+                </div>
+            </div>
+            
+            <div class="radar-card" style="border-left: 5px solid #D97706;">
+                <div class="radar-icon" style="background: #FEF3C7; color: #D97706;">⚠️</div>
+                <div class="radar-info">
+                    <h4 style="color: #D97706;">{{ warning }}</h4>
+                    <p>Students at Risk</p>
+                </div>
+            </div>
+
+            <div class="radar-card" style="border-left: 5px solid #DC2626;">
+                <div class="radar-icon" style="background: #FEE2E2; color: #DC2626;">🚨</div>
+                <div class="radar-info">
+                    <h4 style="color: #DC2626;">{{ high_risk }}</h4>
+                    <p>Critical Priority</p>
+                </div>
+            </div>
+        </div>
+
+        {% if students %}
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>ID / Username</th>
+                        <th>Assignments Completed</th>
+                        <th>Radar Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                        <tr>
+                            <td class="student-name">
+                                <div style="width: 35px; height: 35px; background: #F1F5F9; color: var(--text-muted); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9em;">
+                                    {{ student.fullname[0]|upper }}
+                                </div>
+                                {{ student.fullname }}
+                            </td>
+                            <td><span class="student-id">{{ student.username }}</span></td>
+                            
+                            <td>
+                                {% if student.total_tasks > 0 %}
+                                    <span class="progress-text">{{ student.completed_tasks }} / {{ student.total_tasks }} Tasks</span>
+                                {% else %}
+                                    <span class="progress-text" style="color: #94A3B8;">No tasks assigned</span>
+                                {% endif %}
+                            </td>
+                            
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    {% if student.risk_level == 'On Track' %}
+                                        <span class="badge badge-safe">✅ On Track</span>
+                                    {% elif student.risk_level == 'Warning' %}
+                                        <span class="badge badge-warn">⚠️ Warning</span>
+                                    {% elif student.risk_level == 'High Risk' %}
+                                        <span class="badge badge-danger">🚨 High Risk</span>
+                                    {% else %}
+                                        <span class="badge badge-nodata">⏳ Pending</span>
+                                    {% endif %}
+                                    
+                                    <button class="btn-audit" onclick="openAuditModal('{{ course_id }}', '{{ student.username }}')" title="View Detailed Audit">🔍</button>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div style="background: var(--card-bg); padding: 60px; border-radius: 16px; text-align: center; border: 1px solid #E2E8F0;">
+                <div style="font-size: 50px; margin-bottom: 15px;">📭</div>
+                <h3 style="font-family: 'Poppins', sans-serif; color: var(--text-main); margin-top: 0;">No Students Found</h3>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<div id="auditModal" class="modal-overlay">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeAuditModal()">&times;</span>
+        <h2 style="font-family: 'Poppins', sans-serif; color: var(--text-main); margin-top: 0;" id="audit-student-name">Loading Details...</h2>
+        <p style="color: var(--text-muted); margin-bottom: 25px;">Detailed Assignment Completion Audit</p>
+        
+        <div id="audit-results-container">
+            <p style="text-align: center; color: var(--text-muted);">Fetching data from server...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openAuditModal(courseId, username) {
+        document.getElementById('auditModal').style.display = 'flex';
+        document.getElementById('audit-student-name').innerText = "Loading Details...";
+        document.getElementById('audit-results-container').innerHTML = '<p style="text-align: center; color: var(--text-muted);">Fetching data from server...</p>';
+
+        // Fetch the data silently in the background
+        fetch(`/lecturer/api/student_audit/${courseId}/${username}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('audit-student-name').innerText = "Audit: " + data.student_name;
+                    let htmlContent = '';
+                    
+                    if (data.audit.length === 0) {
+                        htmlContent = '<p style="color: var(--text-muted);">No activities found for this course yet.</p>';
+                    } else {
+                        // Loop through assignments and generate the smart proof cards
+                        data.audit.forEach(item => {
+                            let scoreText = (item.plagiarism_score !== null && item.plagiarism_score !== undefined) 
+                                            ? ` | <span style="color: var(--accent-secondary); font-weight: bold;">Plagiarism Score: ${item.plagiarism_score}%</span>` 
+                                            : '';
+                            
+                            if (item.status === 'Submitted') {
+                                // Convert the text dates into real Time/Date objects to compare them!
+                                let submittedDate = new Date(item.submitted_on);
+                                let dueDate = new Date(item.due_date);
+
+                                if (submittedDate > dueDate) {
+                                    // ⚠️ LATE SUBMISSION
+                                    htmlContent += `
+                                        <div class="audit-item" style="border-left-color: #F59E0B; background: #FFFBEB;">
+                                            <div class="audit-title" style="color: #D97706;">⚠️ ${item.title}</div>
+                                            <div class="audit-meta">
+                                                <strong>Status:</strong> <span style="color: #D97706; font-weight: 600;">Late Submission</span> &nbsp;&bull;&nbsp; 
+                                                Submitted on: ${item.submitted_on} <span style="color: #EF4444; margin-left: 4px;">(Due: ${item.due_date})</span>
+                                                ${scoreText}
+                                            </div>
+                                        </div>
+                                    `;
+                                } else {
+                                    // ✅ ON TIME SUBMISSION
+                                    htmlContent += `
+                                        <div class="audit-item submitted">
+                                            <div class="audit-title">✅ ${item.title}</div>
+                                            <div class="audit-meta">
+                                                <strong>Status:</strong> <span style="color: #059669; font-weight: 600;">On Time</span> &nbsp;&bull;&nbsp; 
+                                                Submitted on: ${item.submitted_on}
+                                                ${scoreText}
+                                            </div>
+                                        </div>
+                                    `;
+                                }
+                            } else {
+                                // ❌ OR ⏳ MISSING / PENDING (Keep your existing styles)
+                                let statusClass = item.status.toLowerCase();
+                                let icon = item.status === 'Missing' ? '❌' : '⏳';
+                                htmlContent += `
+                                    <div class="audit-item ${statusClass}">
+                                        <div class="audit-title">${icon} ${item.title}</div>
+                                        <div class="audit-meta">
+                                            <strong>Status:</strong> ${item.status} &nbsp;&bull;&nbsp; 
+                                            Due: ${item.due_date} 
+                                            ${scoreText}
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        });
+                    }
+                    document.getElementById('audit-results-container').innerHTML = htmlContent;
+                } else {
+                    document.getElementById('audit-results-container').innerHTML = '<p style="color: red;">Failed to load data. System error.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching audit:', error);
+                document.getElementById('audit-results-container').innerHTML = '<p style="color: red;">Network error. Check console.</p>';
+            });
+    }
+
+    function closeAuditModal() {
+        document.getElementById('auditModal').style.display = 'none';
+    }
+</script>
+
+</body>
+</html>

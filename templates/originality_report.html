@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Originality Report - {{ target_name }}</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* 🎨 UNIQUE LECTURER THEME: Midnight Slate & Indigo */
+        :root {
+            --bg-main: #F4F7F9;
+            --sidebar-bg: #111827; 
+            --sidebar-hover: #1F2937;
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            --accent-primary: #4F46E5; 
+            --accent-secondary: #7C3AED; 
+            --danger: #DC2626;
+            --card-bg: #FFFFFF;
+        }
+
+        body { 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-main); 
+            display: flex; 
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            color: var(--text-main);
+        }
+
+        h1, h2, h3, h4, h5, .stat-box {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* =========================================
+           SLEEK DARK SIDEBAR (Fixed Flex Width)
+           ========================================= */
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            color: #fff;
+            padding: 40px 0;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        .user-profile {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 0 20px;
+        }
+
+        .user-icon {
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 50%;
+            margin: 0 auto 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+        }
+
+        .user-profile h3 {
+            margin: 0;
+            font-size: 1.15em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: #F9FAFB;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 30px;
+            color: #9CA3AF;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar a:hover {
+            background: var(--sidebar-hover);
+            color: #FFFFFF;
+            border-left: 4px solid var(--accent-primary);
+            padding-left: 35px;
+        }
+
+        /* =========================================
+           ANALYSIS PANEL (Middle Column)
+           ========================================= */
+        .analysis-sidebar { 
+            width: 360px; 
+            background: var(--card-bg); 
+            border-right: 1px solid #E2E8F0; 
+            height: 100vh; 
+            padding: 40px 25px; 
+            box-sizing: border-box; 
+            overflow-y: auto;
+            flex-shrink: 0;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.02);
+            z-index: 5;
+        }
+        
+        .panel-subtitle { color: var(--text-muted); margin-top: 0; letter-spacing: 1.5px; font-size: 0.85em; font-weight: 600; text-transform: uppercase; }
+        
+        .stat-box { display: flex; align-items: baseline; margin-bottom: 30px; margin-top: 15px; }
+        .similarity-score { font-size: 4.5em; font-weight: 800; color: var(--danger); margin-right: 12px; letter-spacing: -2px; line-height: 1; }
+        .stat-label { font-weight: 700; color: var(--text-muted); font-size: 0.8em; text-transform: uppercase; letter-spacing: 1px; line-height: 1.4; }
+        
+        .source-item { 
+            border-bottom: 1px solid #F1F5F9; 
+            padding: 18px 0; 
+            display: flex; 
+            align-items: flex-start; 
+            transition: background 0.2s;
+            border-radius: 8px;
+        }
+        .source-item:hover { background: #F8FAFC; }
+        
+        .source-number { 
+            background: var(--danger); 
+            color: white; 
+            padding: 4px 10px; 
+            border-radius: 6px; 
+            margin-right: 15px; 
+            font-weight: 700; 
+            font-size: 0.9em;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* =========================================
+           DOCUMENT VIEW (Right Column)
+           ========================================= */
+        .document-view { 
+            flex-grow: 1; 
+            padding: 40px 50px; 
+            height: 100vh; 
+            overflow-y: auto; 
+            box-sizing: border-box; 
+            background: var(--bg-main);
+        }
+        
+        .paper-content { 
+            background: var(--card-bg); 
+            padding: 60px 70px; 
+            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.05); 
+            line-height: 1.9; 
+            color: #334155; 
+            border-radius: 16px;
+            min-height: calc(100% - 80px); /* Fill remaining space below buttons */
+            border: 1px solid #F1F5F9;
+            font-size: 1.05em;
+        }
+
+        .paper-content h1 { color: var(--text-main); font-weight: 700; margin-top: 0; margin-bottom: 10px; font-size: 2.2em; }
+        
+        /* =========================================
+           BUTTONS
+           ========================================= */
+        .btn-group { display: flex; gap: 15px; justify-content: flex-end; margin-bottom: 25px; }
+
+        .btn {
+            padding: 12px 22px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.95em;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 2px solid var(--accent-primary);
+        }
+        .btn-outline:hover { background: var(--accent-primary); color: white; transform: translateY(-2px); }
+
+        /* =========================================
+           HIGHLIGHT STYLING (Softened for modern UI)
+           ========================================= */
+        .match-source-1 { background-color: rgba(220, 38, 38, 0.15); border-bottom: 2px solid #DC2626; border-radius: 2px; }
+        .match-source-2 { background-color: rgba(37, 99, 235, 0.15); border-bottom: 2px solid #2563EB; border-radius: 2px; }
+        .match-source-3 { background-color: rgba(5, 150, 105, 0.15); border-bottom: 2px solid #059669; border-radius: 2px; }
+        .match-source-4 { background-color: rgba(217, 119, 6, 0.15); border-bottom: 2px solid #D97706; border-radius: 2px; }
+        
+        .source-tag { 
+            background: #DC2626; 
+            color: white; 
+            font-size: 0.7em; 
+            padding: 2px 5px; 
+            border-radius: 4px; 
+            vertical-align: super; 
+            margin-left: 3px; 
+            font-weight: 700;
+        }
+
+        /* =========================================
+           MODALS & LOADERS
+           ========================================= */
+        .modal-overlay {
+            display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; 
+            background-color: rgba(17, 24, 39, 0.6); backdrop-filter: blur(4px);
+        }
+        
+        .modal-content {
+            background-color: #fff; margin: 8% auto; padding: 35px; border-radius: 16px; 
+            width: 90%; max-width: 550px; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            border: 1px solid #E2E8F0;
+        }
+
+        .modal-content textarea {
+            width: 100%; box-sizing: border-box; padding: 15px; border: 2px solid #E2E8F0; 
+            border-radius: 10px; margin-bottom: 25px; font-family: 'Inter', sans-serif; 
+            font-size: 1em; background: #F8FAFC; transition: all 0.3s;
+        }
+        .modal-content textarea:focus { outline: none; border-color: var(--accent-primary); background: #fff; }
+
+        .loader-overlay { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(5px);
+            z-index: 9999; justify-content: center; align-items: center; flex-direction: column;
+        }
+        
+        .spinner { 
+            border: 6px solid #E2E8F0; border-top: 6px solid var(--accent-primary); 
+            border-radius: 50%; width: 70px; height: 70px; 
+            animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite; 
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="loader" class="loader-overlay">
+        <div class="spinner"></div>
+        <p style="margin-top: 25px; font-weight: 600; color: var(--text-main); font-family: 'Poppins', sans-serif; font-size: 1.1em;">Recalculating Comparison... Please wait.</p>
+    </div>
+
+    <div style="display: flex; width: 100%;">
+        
+        <div class="sidebar">
+            <div class="user-profile">
+            <div class="user-icon">🎓</div>
+            <h3>{{ user.fullname | default('Lecturer Name') }}</h3>
+        </div>
+            <a href="/lecturer/dashboard">📊 Dashboard</a>
+            <a href="/lecturer/change-password">🔒 Change Password</a>
+            <a href="/logout">🚪 Logout</a>
+        </div>
+
+        <div class="analysis-sidebar">
+            <h3 class="panel-subtitle">Originality Report</h3>
+            
+            <div class="stat-box">
+                <span class="similarity-score">{{ overall_score }}%</span>
+                <span class="stat-label">Similarity<br>Index</span>
+            </div>
+            
+            <hr style="border: 0; border-top: 2px solid #F1F5F9; margin: 30px 0;">
+            
+            <h4 style="color: var(--text-main); font-size: 0.95em; margin-bottom: 20px; font-weight: 700;">📂 PRIMARY SOURCES</h4>
+            
+            {% for match in matches %}
+            <div class="source-item">
+                <span class="source-number">{{ loop.index }}</span>
+                <div style="flex-grow: 1;">
+                    <a href="/lecturer/originality_report/{{ match.sub_id }}" 
+                       onclick="document.getElementById('loader').style.display='flex';" 
+                       style="text-decoration: none;">
+                        <div style="font-weight: 600; color: var(--danger); font-size: 0.95em; margin-bottom: 3px;">
+                            Student Paper: {{ match.source_name }} 🔗
+                        </div>
+                    </a>
+                    <div style="font-size: 0.8em; color: var(--text-muted); font-weight: 500;">Internal Repository</div>
+                </div>
+                <div style="font-weight: 700; color: var(--text-main); font-size: 1.05em; font-family: 'Poppins', sans-serif;">{{ match.score }}%</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="document-view">
+            
+            {% include 'tamper_banner.html' %}
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div style="background-color: #D1FAE5; color: #065F46; border: 1px solid #A7F3D0; padding: 15px; border-radius: 8px; margin-bottom: 25px; font-weight: 500; font-size: 0.95em; display: flex; align-items: center; gap: 10px;">
+                            ✅ {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="btn-group">
+               <a href="/lecturer/view_submissions/{{ activity_id }}" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border: 1px solid #CBD5E1; border-radius: 8px; color: #475569; text-decoration: none; font-weight: 600; font-size: 0.9em; transition: 0.2s;" onmouseover="this.style.background='#F1F5F9'" onmouseout="this.style.background='transparent'">
+    ← Back to Matrix
+</a>
+                <a href="/lecturer/download_plagiarism_report/{{ target_id }}" class="btn btn-outline">📥 Download PDF</a>
+                <button onclick="openEmailModal()" class="btn btn-primary">📤 Publish to Student</button>
+            </div>
+            
+            <div class="paper-content">
+                <h1>{{ target_name }}</h1>
+                <p style="color: var(--text-muted); font-size: 0.95em; margin-bottom: 30px; font-weight: 500;">
+                    Similarity Check Report &bull; Processed on {{ now }}
+                </p>
+                <hr style="border: 0; border-top: 2px solid #F1F5F9; margin-bottom: 40px;">
+                
+                <div id="document-text">
+                    {{ content|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="emailModal" class="modal-overlay">
+        <div class="modal-content">
+            <span onclick="closeEmailModal()" style="float: right; font-size: 28px; font-weight: bold; cursor: pointer; color: #94A3B8; line-height: 1;">&times;</span>
+            <h2 style="margin-top: 0; color: var(--text-main); font-size: 1.6em;">Publish Report</h2>
+            <p style="color: var(--text-muted); font-size: 0.95em; margin-bottom: 25px; line-height: 1.5;">This will make the originality report visible on the student's personal dashboard.</p>
+            
+            <form action="/lecturer/send_report/{{ target_id }}" method="POST" onsubmit="document.getElementById('send-loader').style.display='flex'; closeEmailModal();">
+                <label for="lecturer_comment" style="font-weight: 600; display: block; margin-bottom: 10px; color: var(--text-main);">Lecturer Comment (Optional):</label>
+                <textarea name="lecturer_comment" id="lecturer_comment" rows="4" placeholder="Write your feedback or instructions here..."></textarea>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1em; padding: 14px;">Publish to Dashboard</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="send-loader" class="loader-overlay">
+        <div class="spinner" style="border-top-color: #10B981;"></div>
+        <p style="margin-top: 25px; font-weight: 600; color: #10B981; font-family: 'Poppins', sans-serif; font-size: 1.1em;">Publishing Report... Please wait.</p>
+    </div>
+
+    <script>
+        function openEmailModal() {
+            document.getElementById("emailModal").style.display = "block";
+        }
+        function closeEmailModal() {
+            document.getElementById("emailModal").style.display = "none";
+        }
+    </script>
+
+</body>
+</html>

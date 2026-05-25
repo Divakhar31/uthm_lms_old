@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{{ course.course_name }}</title>
+<style>
+body {
+    font-family: Arial;
+    background: #f2f6fc;
+    margin: 0;
+}
+.container {
+    margin: 20px;
+    margin-left: 260px;
+}
+.box {
+    background: white;
+    padding: 15px;
+    border-left: 4px solid #007bff;
+    border-radius: 6px;
+}
+.upload-box {
+    padding: 10px;
+    margin-top: 10px;
+}
+.table {
+    width: 100%;
+    background: white;
+    margin-top: 10px;
+    border-collapse: collapse;
+}
+.table th, .table td {
+    padding: 10px;
+    border: 1px solid #d3d3d3;
+}
+.table th {
+    background: #007bff;
+    color: white;
+}
+.btn {
+    padding: 6px 12px;
+    background: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+}
+.sidebar {
+    width: 240px;
+    background: #007bff;
+    height: 100vh;
+    position: fixed;
+    color: white;
+    padding-top: 20px;
+}
+.sidebar a {
+    display:block;
+    padding: 12px;
+    text-decoration: none;
+    color: white;
+}
+.sidebar a:hover {
+    background: rgba(255,255,255,0.2);
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h3 style="text-align:center;">{{ session.username }}</h3>
+    <hr style="border-color:white;">
+    <a href="/student/dashboard">Dashboard</a>
+    <a href="/logout">Logout</a>
+</div>
+
+<div class="container">
+<div class="box">
+    <h2>{{ course.course_name }}</h2>
+    <p>Upload your assignments:</p>
+
+    <form method="POST" enctype="multipart/form-data" class="upload-box">
+        <input type="file" name="file" required>
+        <button class="btn" type="submit">Submit</button>
+    </form>
+
+    <h3>Previous Submissions</h3>
+    <table class="table">
+        <tr>
+            <th>File</th>
+        </tr>
+        {% for sub in submissions %}
+        <tr>
+            <td>{{ sub.file_name }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+</div>
+
+</body>
+</html>

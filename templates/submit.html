@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ activity.title }}</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .topbar { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        a { text-decoration: none; color: blue; }
+        .card { border: 1px solid #ccc; padding: 20px; border-radius: 10px; margin-top: 20px; width: 50%; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 10px; }
+        th { background: #f7f7f7; }
+    </style>
+</head>
+
+<body>
+
+<div class="topbar">
+    <h2>{{ activity.title }}</h2>
+    <a href="/student/course/{{ activity.course_id }}">Back</a>
+</div>
+
+<p>{{ activity.description }}</p>
+
+<div class="card">
+    <h3>📤 Submit Your Work</h3>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <br><br>
+        <button type="submit">Upload</button>
+    </form>
+</div>
+
+<h3>📁 Previous Submissions</h3>
+
+{% if submissions %}
+<table>
+    <tr>
+        <th>File Name</th>
+        <th>Submitted Time</th>
+    </tr>
+
+    {% for s in submissions %}
+    <tr>
+        <td>{{ s.file_name }}</td>
+        <td>{{ s.submitted_at }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No submissions yet.</p>
+{% endif %}
+
+</body>
+</html>

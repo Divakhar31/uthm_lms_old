@@ -1,0 +1,38 @@
+<div class="status-banner banner-invalid" style="background: #7F1D1D; color: #FEF2F2; border-color: #991B1B; flex-direction: column; align-items: flex-start; padding: 25px; margin-bottom: 25px; border-radius: 12px; border-left: 6px solid #EF4444; position: relative;">
+    
+    <div style="display: flex; justify-content: space-between; width: 100%; align-items: flex-start; margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.5em;">⚠️</span>
+            <span style="font-size: 1.2em; font-weight: 800;">Security Alert: Record Discrepancy Detected</span>
+        </div>
+        
+        <button onclick="this.closest('.status-banner').style.display='none';" 
+                style="background: transparent; border: none; color: #FEF2F2; font-size: 1.5em; cursor: pointer; padding: 0; line-height: 1; opacity: 0.7; transition: opacity 0.2s;"
+                onmouseover="this.style.opacity='1'" 
+                onmouseout="this.style.opacity='0.7'"
+                title="Dismiss alert">
+            &times;
+        </button>
+    </div>
+    
+    <div style="font-weight: 500; font-size: 0.95em; margin-bottom: 15px; line-height: 1.5;">
+        Our automated system has detected an inconsistency regarding your submission records for 
+        
+        {% if tampered_titles|length > 1 %}
+            <strong style="color: #FECACA;">the following activities:</strong>
+            <ul style="margin: 8px 0 8px 25px; padding: 0; color: #FECACA; font-weight: 700;">
+                {% for title in tampered_titles %}
+                    <li style="margin-bottom: 4px;">{{ title }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <strong style="color: #FECACA;">the activity: {{ tampered_titles[0] }}</strong>. 
+        {% endif %}
+        
+        To protect your data, further automated processing for the affected records has been paused.
+    </div>
+
+    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; border-left: 4px solid #F87171; font-size: 0.9em;">
+        <strong>Action Required:</strong> Please contact your lecturer immediately so they can review the system's audit trail and verify your submission status.
+    </div>
+</div>

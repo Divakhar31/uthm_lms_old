@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Detailed Plagiarism Report</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f8f9fa; }
+        .header-bar { background: #FF9800; color: white; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .comparison-wrapper { display: flex; gap: 20px; padding: 20px; height: 80vh; }
+        .doc-panel { flex: 1; background: white; border: 1px solid #ddd; border-radius: 8px; padding: 25px; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #fff3e0; margin-bottom: 15px; padding-bottom: 10px; }
+        h2 { color: #FF9800; margin: 0; font-size: 1.2em; }
+        .btn-download { background: #2196F3; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 0.85em; font-weight: bold; }
+        mark { cursor: help; }
+    </style>
+</head>
+<body>
+
+    <div class="header-bar">
+        <h1 style="margin:0; font-size: 1.5em;">Plagiarism Evidence: {{ name1 }} vs {{ name2 }}</h1>
+        <a href="javascript:history.back()" style="color: white; text-decoration: none; font-size: 0.9em;">&larr; Back to Matrix Report</a>
+    </div>
+
+    <div class="comparison-wrapper">
+        <div class="doc-panel">
+            <div class="panel-header">
+                <h2>{{ name1 }}'s Document</h2>
+                <a href="/lecturer/download_plagiarism_report/{{ sub1_id }}/vs/{{ sub2_id }}" class="btn-download">Download Report</a>
+            </div>
+            <div style="line-height: 1.6;">{{ text1|safe }}</div>
+        </div>
+
+        <div class="doc-panel">
+            <div class="panel-header">
+                <h2>{{ name2 }}'s Document</h2>
+                <a href="/lecturer/download_plagiarism_report/{{ sub2_id }}/vs/{{ sub1_id }}" class="btn-download">Download Report</a>
+            </div>
+            <div style="line-height: 1.6;">{{ text2|safe }}</div>
+        </div>
+    </div>
+
+</body>
+</html>

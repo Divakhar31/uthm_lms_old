@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Individual Activities</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* 🎨 STUDENT THEME: Royal Blue Accent + Smart Status Cards */
+
+:root {
+    --bg-main: #F4F7F9;
+    --sidebar-bg: #111827; 
+    --sidebar-hover: #1F2937;
+    --text-main: #1E293B;
+    --text-muted: #64748B;
+    --accent-primary: #2563EB; /* Student Royal Blue */
+    --accent-secondary: #3B82F6; 
+    --card-bg: #FFFFFF;
+
+    /* Status Colors */
+    --success-bg: #F0FDF4; --success-border: #10B981; --success-text: #047857;
+    --warning-bg: #FFFBEB; --warning-border: #F59E0B; --warning-text: #B45309;
+    --danger-bg:  #FEF2F2; --danger-border:  #EF4444; --danger-text:  #B91C1C;
+}
+
+body {
+    margin: 0; padding: 0;
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-main); color: var(--text-main);
+}
+
+h1, h2, h3, h4, h5, .btn-student, .status-badge { font-family: 'Poppins', sans-serif; }
+.page { display: flex; min-height: 100vh; }
+
+/* =========================================
+   SLEEK DARK SIDEBAR
+   ========================================= */
+.sidebar {
+    width: 260px; background: var(--sidebar-bg); color: #fff;
+    padding: 40px 0; box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+    display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100;
+}
+
+.user-profile { text-align: center; margin-bottom: 40px; padding: 0 20px; }
+.user-icon {
+    width: 65px; height: 65px;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    border-radius: 50%; margin: 0 auto 15px auto;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+}
+.user-profile h3 { margin: 0; font-size: 1.15em; font-weight: 600; letter-spacing: 0.5px; color: #F9FAFB; }
+
+.sidebar a {
+    display: block; padding: 15px 30px; color: #9CA3AF; text-decoration: none;
+    font-weight: 500; transition: all 0.3s ease; border-left: 4px solid transparent;
+}
+.sidebar a:hover, .sidebar a.active {
+    background: var(--sidebar-hover); color: #FFFFFF;
+    border-left: 4px solid var(--accent-primary); padding-left: 35px;
+}
+
+/* =========================================
+   MAIN CONTENT AREA
+   ========================================= */
+.content { flex-grow: 1; padding: 50px; margin-left: 260px; max-width: 1000px; }
+
+.header-container {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 20px; border-bottom: 2px solid #E2E8F0; padding-bottom: 15px;
+}
+h2.section-title { color: var(--text-main); font-size: 1.8em; font-weight: 700; margin: 0; }
+.btn-back {
+    padding: 10px 20px; background: transparent; color: var(--text-muted); 
+    border: 2px solid #E2E8F0; border-radius: 8px; text-decoration: none; 
+    font-weight: 600; font-family: 'Poppins', sans-serif; transition: all 0.2s;
+}
+.btn-back:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+
+/* =========================================
+   FILTER BUTTONS (TAB DESIGN)
+   ========================================= */
+.filter-container {
+    display: flex; gap: 12px; margin-top: 30px; margin-bottom: 30px; flex-wrap: wrap;
+}
+.btn-filter {
+    background: #E2E8F0; color: #475569; border: none; 
+    padding: 10px 22px; border-radius: 30px; 
+    font-weight: 600; font-size: 0.95em; cursor: pointer; 
+    transition: all 0.3s ease; font-family: 'Poppins', sans-serif;
+}
+.btn-filter:hover { background: #CBD5E1; color: #1E293B; }
+.btn-filter.active { 
+    background: var(--accent-primary); color: white; 
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); 
+}
+
+/* =========================================
+   SMART STATUS ACTIVITY CARDS
+   ========================================= */
+.activity-card {
+    padding: 35px; border-radius: 16px; margin-bottom: 30px; position: relative;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.activity-card:hover { transform: translateY(-4px); box-shadow: 0 15px 35px -5px rgba(0,0,0,0.08); }
+
+.card-submitted { background: var(--success-bg); border: 1px solid #BBF7D0; border-left: 8px solid var(--success-border); }
+.card-pending   { background: var(--warning-bg); border: 1px solid #FDE68A; border-left: 8px solid var(--warning-border); }
+.card-expired   { background: var(--danger-bg);  border: 1px solid #FECACA; border-left: 8px solid var(--danger-border); }
+
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px dashed rgba(0,0,0,0.1); padding-bottom: 15px; }
+.card-header h4 { margin: 0; font-size: 1.4em; font-weight: 700; color: var(--text-main); }
+
+.status-badge {
+    padding: 6px 14px; border-radius: 30px; font-weight: 700; font-size: 0.85em; display: inline-flex; align-items: center; gap: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-transform: uppercase; letter-spacing: 0.5px;
+}
+.badge-submitted { background: var(--success-border); color: white; }
+.badge-pending   { background: var(--warning-border); color: white; }
+.badge-expired   { background: var(--danger-border); color: white; }
+
+.activity-desc { color: var(--text-main); font-size: 1.05em; line-height: 1.6; margin-bottom: 20px; }
+.activity-meta { font-size: 0.95em; display: flex; gap: 20px; align-items: center; font-weight: 500; margin-bottom: 25px; }
+.countdown { font-weight: 700; background: rgba(255,255,255,0.6); padding: 4px 10px; border-radius: 8px; }
+
+/* =========================================
+   FILE MANAGER BOX
+   ========================================= */
+.file-manager {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 12px; padding: 25px;
+}
+.file-manager-title { font-weight: 700; font-family: 'Poppins', sans-serif; color: var(--text-main); margin-top: 0; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+
+.file-list { list-style: none; padding: 0; margin: 0 0 20px 0; }
+.file-item {
+    display: flex; justify-content: space-between; align-items: center; 
+    background: white; padding: 12px 20px; border-radius: 8px; margin-bottom: 10px;
+    border: 1px solid #E2E8F0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.file-name { font-weight: 600; color: var(--accent-primary); }
+.file-time { color: var(--text-muted); font-size: 0.85em; }
+
+/* =========================================
+   BUTTONS
+   ========================================= */
+.btn-student {
+    padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.95em; transition: all 0.2s;
+}
+.btn-download { background: white; color: var(--accent-primary); border: 2px solid #DBEAFE; }
+.btn-download:hover { background: #EEF2FF; border-color: var(--accent-primary); transform: translateY(-2px); }
+
+.btn-upload { background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); color: white; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
+.btn-upload:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); }
+
+.btn-late { background: linear-gradient(135deg, #EF4444, #DC2626); color: white; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); }
+.btn-late:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4); }
+
+.btn-delete { background: #FEF2F2; color: #DC2626; padding: 6px 12px; font-size: 0.85em; border-radius: 6px; }
+.btn-delete:hover { background: #FEE2E2; }
+
+input[type="file"]::file-selector-button {
+    background: #F1F5F9; color: var(--text-main); padding: 8px 16px; border: 1px solid #CBD5E1; 
+    border-radius: 6px; font-weight: 600; cursor: pointer; margin-right: 15px; font-family: 'Poppins', sans-serif; transition: 0.2s;
+}
+input[type="file"]::file-selector-button:hover { background: #E2E8F0; }
+
+</style>
+</head>
+<body>
+
+<div class="page">
+
+    <div class="sidebar">
+        <div class="user-profile">
+            <div class="user-icon">🎓</div>
+            <h3>{{ user.fullname | default('Student Name') }}</h3>
+        </div>
+        
+        <a href="/student/dashboard/{{ session['username'] }}">📊 Dashboard</a> 
+        <a href="/student/change-password">🔒 Change Password</a>
+        <a href="/logout">🚪 Logout</a>
+    </div>
+    
+    <div class="content">
+
+        <div class="header-container">
+            <div>
+                <h2 class="section-title">📝 Individual Activities</h2>
+                <div style="color: var(--text-muted); font-weight: 500; margin-top: 5px;">{{ course.course_code }}: {{ course.course_name }}</div>
+            </div>
+            <a href="/student/dashboard/{{ session['username'] }}" class="btn-back">&larr; Back to Dashboard</a>
+        </div>
+
+        {% if db_tampered %}
+            {% include 'student_tamper_banner.html' %}
+        {% endif %}
+
+        {% if activities %}
+            
+            <div class="filter-container">
+                <button class="btn-filter active" onclick="filterActivities('All', this)">All Activities ({{ activities|length }})</button>
+
+                {% for category_name, acts in categorized_activities.items() %}
+                    {% if acts|length > 0 %}
+                        <button class="btn-filter" onclick="filterActivities('{{ category_name }}', this)">
+                            {{ category_name }} ({{ acts|length }})
+                        </button>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <div id="activities-wrapper">
+                {% for category_name, acts in categorized_activities.items() %}
+                    {% if acts|length > 0 %}
+                        
+                        <div class="category-section" data-category="{{ category_name }}">
+                            
+                            <h4 style="color: var(--text-muted); margin-bottom: 20px; font-family: 'Poppins', sans-serif; border-bottom: 1px solid #E2E8F0; padding-bottom: 10px;">
+                                {% if category_name == 'Assignments' %} 📝
+                                {% elif category_name == 'Projects' %} 🚀
+                                {% elif category_name == 'Labs' %} 🔬
+                                {% else %} 📁 {% endif %}
+                                {{ category_name }}
+                            </h4>
+
+                            {% for activity in acts %}
+                            
+                            {% set card_class = 'card-pending' %}
+                            {% set badge_class = 'badge-pending' %}
+                            {% set status_text = '⏳ Pending' %}
+                            {% set text_color = 'var(--warning-text)' %}
+
+                            {% if activity.has_submitted %}
+                                {% set card_class = 'card-submitted' %}
+                                {% set badge_class = 'badge-badge-submitted' %}
+                                {% set status_text = '✅ Submitted' %}
+                                {% set text_color = 'var(--success-text)' %}
+                                {% if activity.is_late %}
+                                    {% set status_text = '⚠️ Late Submitted' %}
+                                {% endif %}
+                            {% elif activity.due_date < now %}
+                                {% set card_class = 'card-expired' %}
+                                {% set badge_class = 'badge-expired' %}
+                                {% set status_text = '🚨 Past Due' %}
+                                {% set text_color = 'var(--danger-text)' %}
+                            {% endif %}
+
+                            <div class="activity-card {{ card_class }}">
+                                
+                                <div class="card-header">
+                                    <h4>{{ activity.title }}</h4>
+                                    <span class="status-badge {{ badge_class }}" style="background: {{ text_color }}; color: white;">
+                                        {{ status_text }}
+                                    </span>
+                                </div>
+
+                                <div class="activity-desc">
+                                    <strong>Description:</strong> {{ activity.description }}
+                                </div>
+                                
+                                <div class="activity-meta" style="color: {{ text_color }};">
+                                    <span><strong>Due Date:</strong> {{ activity.due_date.strftime('%Y-%m-%d %H:%M') }}</span>
+                                    {% if activity.due_date > now %}
+                                        <span class="countdown" id="countdown-{{ activity.id }}"></span>
+                                    {% endif %}
+                                </div>
+                                
+                                {% if activity.file_name %}
+                                    <a href="/download/task/{{ activity.id }}" class="btn-student btn-download" style="margin-bottom: 25px;">
+                                        📥 Download Task File ({{ activity.file_name }})
+                                    </a>
+                                {% endif %}
+
+                                <div class="file-manager">
+                                    <h5 class="file-manager-title">📁 File Submission Manager</h5>
+
+                                    {% if activity.student_files %}
+                                        <ul class="file-list">
+                                            {% for file in activity.student_files %}
+                                            <li class="file-item">
+                                                <div>
+                                                    <span class="file-name">{{ file.file_name }}</span>
+                                                    <span class="file-time">
+                                                        &nbsp;&bull;&nbsp; Submitted: {{ file.submitted_at.strftime('%Y-%m-%d %H:%M') }}
+                                                        {% if file.submitted_at > activity.due_date %}
+                                                            <strong style="color: #DC2626;">[LATE]</strong>
+                                                        {% endif %}
+                                                    </span>
+                                                </div>
+                                                
+                                                <form method="POST" action="{{ url_for('student_delete_submission_file', file_id=file.id) }}" style="margin: 0;" onsubmit="return confirm('Delete this file?');">
+                                                    <button type="submit" class="btn-student btn-delete">🗑️ Delete</button>
+                                                </form>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        <div style="padding: 15px; background: rgba(255,255,255,0.5); border-radius: 8px; color: {{ text_color }}; margin-bottom: 20px; font-weight: 500;">
+                                            No files submitted yet.
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <div style="margin-top: 15px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 20px;">
+                                        {% if activity.due_date < now %}
+                                            <p style="color: var(--danger-text); font-weight: 600; margin-top: 0;">⚠️ Deadline has passed. Submissions will be marked as LATE.</p>
+                                        {% endif %}
+
+                                        <form action="{{ url_for('student_submit_activity') }}" method="POST" enctype="multipart/form-data" style="display: flex; align-items: center; flex-wrap: wrap; gap: 15px;">
+                                            <input type="hidden" name="activity_id" value="{{ activity.id }}">
+                                            <input type="hidden" name="course_id" value="{{ course_id }}">
+                                            
+                                            <input type="file" name="submission_files" multiple required>
+                                            
+                                            <button type="submit" class="btn-student {% if activity.due_date < now %}btn-late{% else %}btn-upload{% endif %}">
+                                                {% if activity.due_date < now %}📤 Upload Late Submission{% else %}📤 Upload Files{% endif %}
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+        {% else %}
+            <div style="padding: 40px; text-align: center; background: #fff; border-radius: 16px; border: 1px solid #E2E8F0; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                <div style="font-size: 40px; margin-bottom: 15px;">📭</div>
+                <h3 style="color: var(--text-main); font-family: 'Poppins', sans-serif;">No Activities Yet</h3>
+                <p style="color: var(--text-muted);">No individual activities have been posted for this course yet.</p>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<script>
+    // THE FILTER LOGIC
+    function filterActivities(categoryName, clickedButton) {
+        const allButtons = document.querySelectorAll('.btn-filter');
+        allButtons.forEach(btn => btn.classList.remove('active'));
+
+        clickedButton.classList.add('active');
+
+        const allSections = document.querySelectorAll('.category-section');
+        allSections.forEach(section => {
+            if (categoryName === 'All') {
+                section.style.display = 'block';
+            } else {
+                if (section.getAttribute('data-category') === categoryName) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            }
+        });
+    }
+
+    // DUE DATE COUNTDOWN LOGIC
+    function startCountdown(activityId, dueDate) {
+        const countdownElement = document.getElementById(`countdown-${activityId}`);
+        const deadline = new Date(dueDate).getTime();
+
+        const updateCountdown = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = deadline - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            if (distance > 0) {
+                countdownElement.innerHTML = `⏱️ ${days}d ${hours}h ${minutes}m ${seconds}s left`;
+            } else {
+                clearInterval(updateCountdown);
+                countdownElement.innerHTML = "🚨 TIME EXPIRED";
+                countdownElement.style.color = 'var(--danger-text)';
+                countdownElement.style.background = 'var(--danger-bg)';
+            }
+        }, 1000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        {% for category_name, acts in categorized_activities.items() %}
+            {% for activity in acts %}
+                {% if activity.due_date > now %}
+                    startCountdown({{ activity.id }}, "{{ activity.due_date.isoformat() }}");
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    });
+</script>
+
+</body>
+</html>

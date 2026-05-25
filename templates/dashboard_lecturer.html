@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lecturer Dashboard</title>
+
+<style>
+/* 🎨 UNIQUE LECTURER THEME: Midnight Slate & Indigo */
+
+:root {
+    --bg-main: #F3F4F6;
+    --sidebar-bg: #111827; /* Deep Midnight */
+    --sidebar-hover: #1F2937;
+    --text-main: #1F2937;
+    --text-muted: #6B7280;
+    --accent-primary: #4F46E5; /* Vibrant Indigo */
+    --accent-secondary: #7C3AED; /* Deep Purple */
+    --card-bg: #FFFFFF;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg-main);
+    color: var(--text-main);
+}
+
+.page {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* =========================================
+   SLEEK DARK SIDEBAR
+   ========================================= */
+.sidebar {
+    width: 260px;
+    background: var(--sidebar-bg);
+    color: #fff;
+    padding: 40px 0;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.user-profile {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 0 20px;
+}
+
+.user-icon {
+    width: 65px;
+    height: 65px;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    border-radius: 50%;
+    margin: 0 auto 15px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+}
+
+.user-profile h3 {
+    margin: 0;
+    font-size: 1.15em;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #F9FAFB;
+}
+
+.sidebar a {
+    display: block;
+    padding: 15px 30px;
+    color: #9CA3AF;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+}
+
+.sidebar a:hover, .sidebar a.active {
+    background: var(--sidebar-hover);
+    color: #FFFFFF;
+    border-left: 4px solid var(--accent-primary);
+    padding-left: 35px;
+}
+
+/* =========================================
+   MAIN CONTENT AREA
+   ========================================= */
+.content {
+    flex-grow: 1;
+    padding: 50px;
+    max-width: 1200px;
+}
+
+h3.section-title {
+    color: var(--text-main);
+    font-size: 1.5em;
+    font-weight: 700;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #E5E7EB;
+    padding-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+p.subtitle {
+    color: var(--text-muted);
+    font-size: 1.05em;
+    margin-bottom: 30px;
+}
+
+/* =========================================
+   MODERN COURSE SELECTOR "PILLS"
+   ========================================= */
+.course-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+.course-label {
+    display: inline-flex;
+    align-items: center;
+    background: var(--card-bg);
+    padding: 15px 25px;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.course-label:hover {
+    box-shadow: 0 8px 15px rgba(0,0,0,0.05);
+    transform: translateY(-2px);
+}
+
+/* Hide standard radio but keep it accessible */
+.course-label input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 12px;
+    accent-color: var(--accent-primary);
+    cursor: pointer;
+}
+
+/* =========================================
+   FLOATING CARDS & FORMS
+   ========================================= */
+.dashboard-card {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    margin-bottom: 30px;
+    display: none; /* Controlled by JS */
+}
+
+.dashboard-card h4 {
+    margin-top: 0;
+    color: var(--text-main);
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+/* Modern Inputs */
+input[type="text"], textarea {
+    width: 100%;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    border: 1px solid #D1D5DB;
+    border-radius: 10px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 1em;
+    transition: all 0.3s;
+    background: #F9FAFB;
+}
+
+input[type="text"]:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    background: #FFFFFF;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* =========================================
+   BUTTONS
+   ========================================= */
+.btn {
+    padding: 12px 24px;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+    font-weight: 600;
+    font-size: 0.95em;
+    text-align: center;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+}
+
+.action-buttons-group {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--accent-primary);
+    border: 2px solid var(--accent-primary);
+}
+
+.btn-outline:hover {
+    background: var(--accent-primary);
+    color: white;
+}
+
+/* =========================================
+   FLASH MESSAGES (NEW)
+   ========================================= */
+.flash { padding: 16px 20px; border-radius: 12px; margin-bottom: 25px; font-weight: 600; }
+.flash.success { background: #D1FAE5; color: #065F46; border: 1px solid #A7F3D0; }
+.flash.danger { background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
+.flash.info { background: #DBEAFE; color: #1E40AF; border: 1px solid #BFDBFE; }
+.flash.warning { background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
+</style>
+
+<script>
+let selectedCourseId = null;
+
+function updateCourseSelection(courseId) {
+    selectedCourseId = courseId;
+    
+    const postContainer = document.getElementById('post-upload-container');
+    const manageContainer = document.getElementById('manage-activities-container');
+    const selectionText = document.getElementById('current-selection');
+    
+    const individualBtn = document.getElementById('manage-individual-btn');
+    const groupBtn = document.getElementById('manage-group-btn');
+    const managePostsBtn = document.getElementById('manage-posts-btn'); 
+    const studentListBtn = document.getElementById('student-list-btn');
+
+    if (courseId) {
+        postContainer.style.display = 'block';
+        manageContainer.style.display = 'block';
+        selectionText.style.display = 'none'; // Hide the "please select" text
+        
+        // Update all the dynamic links securely
+        individualBtn.href = '/lecturer/activities/individual/' + courseId;
+        groupBtn.href = '/lecturer/activities/group/' + courseId;
+        managePostsBtn.href = '/lecturer/course/' + courseId + '/manage_posts'; 
+        studentListBtn.href = '/lecturer/students/' + courseId;
+    } else {
+        postContainer.style.display = 'none';
+        manageContainer.style.display = 'none';
+        selectionText.style.display = 'block';
+    }
+
+    if (document.getElementById('post-course-id')) {
+        document.getElementById('post-course-id').value = courseId;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // If a radio button is already checked (from the Jinja template), trigger the UI update
+    const checkedRadio = document.querySelector('input[name="classroom"]:checked');
+    if (checkedRadio) {
+        updateCourseSelection(checkedRadio.value);
+    } else {
+        // Fallback: check the first one
+        const firstRadio = document.querySelector('input[name="classroom"]');
+        if (firstRadio) {
+            firstRadio.checked = true; 
+            updateCourseSelection(firstRadio.value);
+        }
+    }
+});
+</script>
+
+</head>
+<body>
+
+<div class="page">
+
+    <div class="sidebar">
+        <div class="user-profile">
+            <div class="user-icon">🎓</div>
+            <h3>{{ user.fullname | default('Lecturer Name') }}</h3>
+        </div>
+        
+        <a href="/lecturer/dashboard{% if course_id %}/{{ course_id }}{% endif %}" class="{% if 'dashboard' in request.path %}active{% endif %}">📊 Dashboard</a>
+
+        <a href="/change-password" class="{% if 'change-password' in request.path %}active{% endif %}">🔒 Change Password</a>
+
+        <a href="/logout">🚪 Logout</a>
+    </div>
+
+    <div class="content">
+
+        <h3 class="section-title">🏢 Select Classroom</h3>
+        <p class="subtitle">Select a specific classroom to manage its content and announcements.</p>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <div class="course-grid">
+            {% for c in classrooms %}
+            <label class="course-label">
+                <input type="radio" name="classroom"
+                       value="{{ c.course_id }}"
+                       onclick="updateCourseSelection({{c.course_id}})"
+                       {% if course_id == c.course_id %}checked{% endif %} >
+                {{ c.course_code }} : {{ c.course_name }}
+            </label>
+            {% endfor %}
+        </div>
+        
+        <h3 id="current-selection" style="color: var(--text-muted); font-weight: 500;">👆 Please select a classroom above to continue.</h3>
+        
+        <div id="manage-activities-container" class="dashboard-card">
+            <h4>⚙️ Course Management Tools</h4>
+            <div class="action-buttons-group" style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <a id="manage-individual-btn" href="/lecturer/activities/individual/{{ course_id }}" class="btn btn-primary">Individual Activities</a>
+                <a id="manage-posts-btn" href="/lecturer/course/{{ course_id }}/manage_posts" class="btn btn-primary">Manage Announcements</a>
+                
+                <a id="student-list-btn" href="/lecturer/students/{{ course_id }}" class="btn btn-primary">Student Name List</a>
+            </div>
+        </div>
+        
+        <div id="post-upload-container" class="dashboard-card">
+            <h4>📢 Broadcast Announcement to Stream</h4>
+            <form method="POST" action="/lecturer/post">
+                <input type="hidden" name="course_id" id="post-course-id" value="{{ course_id }}" required>
+
+                <input type="text" name="post_title" placeholder="Give your announcement a clear title..." required>
+                <textarea name="post_content" placeholder="Type the details of your announcement here..." required></textarea>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Publish Announcement</button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

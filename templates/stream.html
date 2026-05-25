@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ course.course_code }} - Stream</title>
+    <style>
+        /* Premium Styling Matching Your Portal */
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; color: #333; }
+        
+        .navbar { background: linear-gradient(to right, #1A2980, #26D0CE); padding: 20px 30px; color: white; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .navbar h2 { margin: 0; font-size: 1.5em; }
+        .navbar a { color: white; text-decoration: none; font-weight: bold; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 8px; transition: 0.3s; }
+        .navbar a:hover { background: rgba(255,255,255,0.3); }
+
+        .container { max-width: 800px; margin: 30px auto; padding: 0 20px; }
+
+        /* Modern Tabs */
+        .nav-tabs { display: flex; gap: 15px; margin-bottom: 25px; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+        .nav-tabs a { text-decoration: none; color: #666; font-weight: bold; padding: 10px 15px; border-radius: 8px; transition: 0.2s; }
+        .nav-tabs a.active { color: #1A2980; background: #e3f2fd; }
+        .nav-tabs a:hover:not(.active) { background: #eee; }
+
+        /* Post Cards */
+        .post-card { background: white; border-radius: 12px; padding: 25px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .post-card h4 { margin: 0 0 10px 0; color: #1A2980; display: flex; align-items: center; gap: 10px; font-size: 1.1em;}
+        .post-card p { margin: 0 0 15px 0; line-height: 1.6; color: #444; white-space: pre-wrap; font-size: 1.05em;}
+        .timestamp { color: #888; font-size: 0.85em; font-weight: 500; }
+
+        /* Integrated Posting Form */
+        .create-post textarea { width: 100%; padding: 15px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-family: inherit; font-size: 1em; resize: vertical; min-height: 100px; margin-bottom: 15px; transition: 0.3s;}
+        .create-post textarea:focus { outline: none; border-color: #26D0CE; box-shadow: 0 0 8px rgba(38,208,206,0.3); }
+        .btn { background: linear-gradient(to right, #1A2980, #26D0CE); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1em; font-weight: bold; cursor: pointer; float: right; transition: transform 0.2s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(38, 208, 206, 0.4); }
+        .clearfix::after { content: ""; clear: both; display: table; }
+        
+        .empty-state { text-align: center; padding: 50px; color: #888; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <h2>{{ course.course_code }} - {{ course.course_name }}</h2>
+    <a href="/logout">Logout</a>
+</div>
+
+<div class="container">
+    
+    <div class="nav-tabs">
+        <a href="/{{ session.role }}/stream/{{ course_id }}" class="active">Stream</a>
+        <a href="/{{ session.role }}/course/{{ course_id }}/activities/individual">Individual Activities</a>
+        <a href="/{{ session.role }}/course/{{ course_id }}/activities/group">Group Activities</a>
+
+        {% if session.get('role') == 'lecturer' %}
+            <a href="/lecturer/course/{{ course_id }}/manage_posts">Manage Announcements</a>
+        {% endif %}
+    </div>
+
+    {% if session.get('role') == 'lecturer' %}
+    <div class="post-card create-post clearfix">
+        <h4 style="margin-top: 0; color: #333;">📢 Make an Announcement</h4>
+        <form action="/lecturer/post" method="POST">
+            <input type="hidden" name="course_id" value="{{ course_id }}">
+            <textarea name="post_content" required placeholder="Announce something to your class..."></textarea>
+            <button type="submit" class="btn">Post Announcement</button>
+        </form>
+    </div>
+    {% endif %}
+
+    {% if posts %}
+        {% for post in posts %}
+            <div class="post-card">
+                <h4>👤 {{ post.author_name }}</h4>
+                <p>{{ post.content }}</p>
+                <div class="timestamp">Posted on: {{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <h3>No Announcements Yet</h3>
+            <p>When the lecturer posts an announcement, it will appear here.</p>
+        </div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>

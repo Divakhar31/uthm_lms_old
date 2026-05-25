@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>UTHM LMS Login</title>
+    <style>
+        /* Modern Animated Background */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* Premium moving gradient background */
+            background: linear-gradient(-45deg, #1A2980, #26D0CE, #0052D4, #4364F7);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* The Perfect Square Card */
+        .login-square {
+            width: 450px;
+            height: 450px; /* Forces the exact square shape */
+            background: rgba(255, 255, 255, 0.95); /* Slight transparency */
+            backdrop-filter: blur(10px);
+            border-radius: 24px; /* Soft, modern corners on the square */
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Evenly spaces the content */
+            position: relative;
+        }
+
+        /* Typography */
+        .header {
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #1A2980;
+            font-size: 2.2em;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            color: #666;
+            margin: 5px 0 15px 0;
+            font-size: 0.95em;
+            font-weight: 500;
+        }
+
+        /* Inputs */
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            background: #f4f7f6;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            box-sizing: border-box;
+            font-size: 1em;
+            font-family: inherit;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        input::placeholder {
+            color: #aaa;
+            font-weight: 500;
+        }
+
+        input:focus {
+            background: #fff;
+            border: 2px solid #26D0CE;
+            box-shadow: 0 4px 15px rgba(38, 208, 206, 0.2);
+            outline: none;
+        }
+
+        /* Button */
+        .btn.primary {
+            background: linear-gradient(to right, #1A2980, #26D0CE);
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 5px;
+        }
+
+        .btn.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(38, 208, 206, 0.4);
+        }
+
+        /* Footer Links */
+        .footer {
+            text-align: center;
+            font-size: 0.9em;
+            margin-top: 15px;
+        }
+        
+        .footer a {
+            color: #1A2980;
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.2s;
+        }
+
+        .footer a:hover {
+            color: #26D0CE;
+        }
+
+        .divider {
+            height: 1px;
+            background: #eee;
+            margin: 15px 0;
+        }
+
+        /* Flash Messages - Positioned to not break the square layout */
+        .flash-container {
+            position: absolute;
+            top: -60px; /* Floats above the square */
+            left: 0;
+            width: 100%;
+            text-align: center;
+        }
+
+        .flash {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 0.9em;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .flash.danger, .flash.error, .alert { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+        .flash.success { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+        .flash.info { background: #e3f2fd; color: #0d47a1; border: 1px solid #bbdefb; }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-square">
+        
+        <div class="flash-container">
+            {% if error %}
+                <div class="flash danger">{{ error }}</div>
+            {% endif %}
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash {{ category if category != 'error' else 'danger' }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <div class="header">
+            <h1>UTHM Portal</h1>
+            <p>Learning Management System</p>
+        </div>
+
+        <form action="/login" method="POST">
+            <div class="input-group">
+                <input name="username" type="text" placeholder="Username" required>
+            </div>
+            
+            <div class="input-group">
+                <input name="password" type="password" placeholder="Password" required>
+            </div>
+
+            <button type="submit" class="btn primary">Secure Login</button>
+        </form>
+
+        <div class="footer">
+            <a href="/forgot_password">Forgot Password?</a>
+            <div class="divider"></div>
+            <span style="color: #666;">Don't have an account?</span> <a href="/register">Register Here</a>
+        </div>
+
+    </div>
+
+</body>
+</html>

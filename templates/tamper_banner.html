@@ -1,0 +1,53 @@
+{% if db_tampered %}
+<div style="background: #7F1D1D; color: #FEF2F2; padding: 18px 45px 18px 25px; border-radius: 12px; border: 1px solid #991B1B; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 15px -3px rgba(220, 38, 38, 0.25); width: 100%; box-sizing: border-box; position: relative;">
+    
+    <button onclick="this.parentElement.style.display='none';" 
+            style="position: absolute; top: 12px; right: 15px; background: transparent; border: none; color: #FEF2F2; font-size: 1.5em; cursor: pointer; padding: 0; line-height: 1; opacity: 0.7; transition: opacity 0.2s;"
+            onmouseover="this.style.opacity='1'" 
+            onmouseout="this.style.opacity='0.7'"
+            title="Dismiss alert">
+        &times;
+    </button>
+
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <span style="font-size: 2em; line-height: 1;">🚨</span>
+        <div>
+            <strong style="font-family: 'Poppins', sans-serif; font-size: 1.2em; display: block; margin-bottom: 3px;">
+                {% if hacked_activities and hacked_activities|length > 1 %}
+                    MULTIPLE TAMPERING EVENTS DETECTED!
+                {% else %}
+                    DATABASE TAMPERING DETECTED!
+                {% endif %}
+            </strong>
+            <span style="font-size: 0.95em; opacity: 0.9;">The SQL Database does not match the immutable blockchain ledger.</span>
+        </div>
+    </div>
+    
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end;">
+        {% if session.get('role') == 'lecturer' %}
+            
+            {% if hacked_activities and hacked_activities|length > 1 %}
+                {% for hacked in hacked_activities %}
+                    <a href="/lecturer/blockchain_audit_activity/{{ hacked.id }}" style="background: #FFFFFF; color: #991B1B; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: bold; font-family: 'Poppins', sans-serif; transition: all 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-size: 0.9em; white-space: nowrap;">
+                        Audit: {{ hacked.title }} &rarr;
+                    </a>
+                {% endfor %}
+            
+            {% else %}
+                {% set target_id = activity_id %}
+                {% if hacked_activities and hacked_activities|length == 1 %}
+                    {% set target_id = hacked_activities[0].id %}
+                {% endif %}
+                <a href="/lecturer/blockchain_audit_activity/{{ target_id }}" style="background: #FFFFFF; color: #991B1B; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; font-family: 'Poppins', sans-serif; transition: all 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); white-space: nowrap;">
+                    View Audit Trail &rarr;
+                </a>
+            {% endif %}
+            
+        {% else %}
+            <button style="background: #FFFFFF; color: #991B1B; padding: 10px 20px; border-radius: 8px; border: none; font-weight: bold; font-family: 'Poppins', sans-serif; opacity: 0.7; cursor: not-allowed; white-space: nowrap;">
+                Contact Lecturer
+            </button>
+        {% endif %}
+    </div>
+</div>
+{% endif %}

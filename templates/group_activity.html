@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Activity</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #edf3fa;
+        }
+
+        .sidebar {
+            width: 230px;
+            height: 100vh;
+            background-color: #007bff;
+            color: white;
+            position: fixed;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 12px;
+            margin-bottom: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .content {
+            margin-left: 260px;
+            margin-top: 30px;
+            background-color: white;
+            padding: 30px;
+            width: 70%;
+            border-radius: 10px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid white;
+            text-align: center;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+        }
+
+        input[type="file"] {
+            margin-top: 10px;
+        }
+
+        .submit-btn {
+            background-color: green;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>{{ session['username'] }}</h2>
+    <a href="/student/dashboard">Dashboard</a>
+    <a href="/logout">Logout</a>
+</div>
+
+<div class="content">
+    <h1>GROUP ACTIVITY</h1>
+    <p>Upload your group submission:</p>
+
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <button class="submit-btn" type="submit">Submit</button>
+    </form>
+
+    <h3>Previous Submissions</h3>
+    <table>
+        <tr><th>File</th></tr>
+        {% for s in submissions %}
+            <tr><td>{{ s.file_name }}</td></tr>
+        {% endfor %}
+    </table>
+</div>
+
+</body>
+</html>

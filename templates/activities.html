@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Activities</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #edf3fa;
+    }
+
+    .sidebar {
+        width: 230px;
+        height: 100vh;
+        background-color: #007bff;
+        color: white;
+        position: fixed;
+        padding: 15px;
+        box-sizing: border-box;
+    }
+
+    .sidebar h2 {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .sidebar a {
+        display: block;
+        color: white;
+        padding: 12px;
+        margin-bottom: 8px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .content {
+        margin-left: 260px;
+        margin-top: 30px;
+        background-color: white;
+        padding: 30px;
+        width: 70%;
+        border-radius: 10px;
+    }
+
+    h1 {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .btn-activity {
+        display: block;
+        background-color: #007bff;
+        color: white;
+        padding: 12px;
+        margin: 10px 0;
+        text-align: center;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .btn-activity:hover {
+        background-color: #0056b3;
+    }
+
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>{{ session['username'] }}</h2>
+    <a href="/student/dashboard">Dashboard</a>
+    <a href="/logout">Logout</a>
+</div>
+
+<div class="content">
+    <h1>ACTIVITIES</h1>
+
+    <h3>Individual Activities</h3>
+    {% for act in individual_activities %}
+        <a class="btn-activity" href="/student/individual/{{ act.id }}">
+            {{ act.title }}
+        </a>
+    {% endfor %}
+
+    <h3>Group Activities</h3>
+    {% for act in group_activities %}
+        <a class="btn-activity" href="/student/group/{{ act.id }}">
+            {{ act.title }}
+        </a>
+    {% endfor %}
+</div>
+
+</body>
+</html>

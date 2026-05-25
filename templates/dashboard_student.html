@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* 🎨 THEME: Lecturer Layout + STUDENT ROYAL BLUE ACCENT */
+        :root {
+            --bg-main: #F4F7F9;
+            --sidebar-bg: #111827; 
+            --sidebar-hover: #1F2937;
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            --accent-primary: #2563EB; /* Student Blue */
+            --accent-secondary: #3B82F6; /* Lighter Blue */
+            --card-bg: #FFFFFF;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-main); color: var(--text-main);
+        }
+
+        h1, h2, h3, h4, h5, h6, .sidebar a, .btn-student { font-family: 'Poppins', sans-serif; }
+        .page { display: flex; min-height: 100vh; }
+
+        /* =========================================
+           SLEEK DARK SIDEBAR
+           ========================================= */
+        .sidebar {
+            width: 260px; background: var(--sidebar-bg); color: #fff;
+            padding: 40px 0; box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            display: flex; flex-direction: column; position: fixed; height: 100vh;
+        }
+
+        .user-profile { text-align: center; margin-bottom: 40px; padding: 0 20px; }
+        .user-icon {
+            width: 65px; height: 65px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 50%; margin: 0 auto 15px auto;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 30px; box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+        }
+        .user-profile h3 { margin: 0; font-size: 1.15em; font-weight: 600; letter-spacing: 0.5px; color: #F9FAFB; }
+
+        .sidebar a {
+            display: block; padding: 15px 30px; color: #9CA3AF; text-decoration: none;
+            font-weight: 500; transition: all 0.3s ease; border-left: 4px solid transparent;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background: var(--sidebar-hover); color: #FFFFFF;
+            border-left: 4px solid var(--accent-primary); padding-left: 35px;
+        }
+
+        /* =========================================
+           MAIN CONTENT AREA
+           ========================================= */
+        .content { flex-grow: 1; padding: 50px; margin-left: 260px; max-width: 1200px; }
+        
+        .header-container {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px; border-bottom: 2px solid #E2E8F0; padding-bottom: 15px;
+        }
+        h2.section-title { color: var(--text-main); font-size: 1.8em; font-weight: 700; margin: 0; }
+        p.subtitle { color: var(--text-muted); font-size: 1.05em; margin-bottom: 30px; }
+
+        /* =========================================
+           CARDS
+           ========================================= */
+        .dashboard-card {
+            background: var(--card-bg); padding: 30px; border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); margin-bottom: 35px;
+            border: 1px solid #F1F5F9;
+        }
+
+        /* =========================================
+           CLASSROOM SELECTORS
+           ========================================= */
+        .course-selector-container { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 35px; }
+        label.course-option {
+            background: #FFFFFF; color: #475569; border: 2px solid #E2E8F0; padding: 12px 24px; border-radius: 30px; 
+            font-weight: 600; font-size: 0.95em; cursor: pointer; transition: all 0.3s ease; font-family: 'Poppins', sans-serif;
+            display: inline-flex; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+        label.course-option:hover { background: #F8FAFC; border-color: #CBD5E1; transform: translateY(-2px); }
+        input[type="radio"] { display: none; }
+        label.course-option:has(input:checked) {
+            background: var(--accent-primary); color: white; border-color: var(--accent-primary);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); transform: translateY(-2px);
+        }
+
+        /* =========================================
+           UNIFIED STUDENT BUTTONS & ANIMATIONS
+           ========================================= */
+        .action-group { 
+            display: flex; gap: 15px; flex-wrap: wrap; 
+            justify-content: flex-start;
+        }
+
+        .btn-student {
+            background: #F8FAFC;
+            color: var(--accent-primary);
+            border: 2px solid #DBEAFE;
+            padding: 12px 22px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95em;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+
+        .btn-student:hover {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: #FFFFFF;
+            border-color: transparent;
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.35);
+        }
+
+        /* =========================================
+           SMART STREAM POSTS
+           ========================================= */
+        #streamBox {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .postContainer, #streamBox > div {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            border: 1px solid #E2E8F0;
+            border-left: 6px solid var(--accent-primary);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .postContainer:hover, #streamBox > div:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 25px rgba(37, 99, 235, 0.15);
+            border-color: #BFDBFE;
+        }
+
+        .postContainer h4, #streamBox > div h4 {
+            color: var(--text-main); margin-top: 0; margin-bottom: 15px; font-size: 1.15em; font-weight: 700; display: flex; align-items: center; gap: 12px;
+        }
+        .postContainer h4::before, #streamBox > div h4::before {
+            content: '📢'; background: #EEF2FF; border-radius: 50%; padding: 8px 10px; font-size: 1.1em;
+        }
+        .postContainer p, #streamBox > div p {
+            margin-top: 0; margin-bottom: 20px; line-height: 1.6; color: #475569; font-size: 1.05em;
+        }
+        .postContainer small, #streamBox > div small {
+            display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 0.85em; font-weight: 600; background: #F8FAFC; border: 1px solid #E2E8F0; padding: 6px 14px; border-radius: 20px;
+        }
+        .postContainer small::before, #streamBox > div small::before { content: '🕒'; }
+        #streamBox hr { display: none; }
+
+        /* =========================================
+           MODALS
+           ========================================= */
+        .modal-overlay {
+            display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(17, 24, 39, 0.6); backdrop-filter: blur(4px); justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background-color: #fff; padding: 35px; border-radius: 16px; width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .modal-close { float: right; font-size: 28px; font-weight: bold; cursor: pointer; color: #94A3B8; line-height: 1; transition: color 0.2s; }
+        .modal-close:hover { color: #DC2626; }
+
+        .reminder-item {
+            border-left: 4px solid #E2E8F0; padding: 15px 20px; margin-bottom: 15px; background: #F8FAFC; border-radius: 0 8px 8px 0;
+        }
+        .reminder-item.warning { border-left-color: #F59E0B; }
+        .reminder-item.overdue { border-left-color: #DC2626; background: #FEF2F2;}
+        .reminder-title { font-weight: 700; color: var(--text-main); font-size: 1.1em; margin-bottom: 5px; }
+        .reminder-meta { color: var(--text-muted); font-size: 0.9em; }
+    </style>
+
+    <script>
+        function showStream(courseId) {
+            const streamBox = document.getElementById('streamBox');
+            updateActionButtonLinks(courseId); 
+            streamBox.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 40px;">Loading stream content...</p>';
+
+            fetch(`/api/get_stream_content/${courseId}`)
+                .then(response => response.text())
+                .then(html => streamBox.innerHTML = html)
+                .catch(error => streamBox.innerHTML = '<p style="color: #DC2626; text-align: center;">Error loading stream content.</p>');
+        }
+
+        function updateActionButtonLinks(courseId) {
+    document.getElementById('individual-tab').href = `/student/activities/individual/${courseId}`;
+    document.getElementById('info-tab').href = `/student/courseinfo/${courseId}`;
+    
+    // THE FIX: Now the Originality Reports button dynamically updates its link!
+    document.getElementById('reports-tab').href = `/student/my_reports/${courseId}`;
+    
+    document.getElementById('lecturer-profile-tab').onclick = function(e) { e.preventDefault(); openLecturerModal(courseId); };
+    document.getElementById('notifications-tab').onclick = function(e) { e.preventDefault(); openNotificationsModal(courseId); };
+}
+
+        function openLecturerModal(courseId) {
+            document.getElementById('profileModal').style.display = 'flex';
+            document.getElementById('profile-content').innerHTML = '<p style="color: var(--text-muted);">Fetching profile data...</p>';
+            
+            fetch(`/student/api/lecturer_profile/${courseId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success) {
+                        const email = data.profile.email ? `<a href="mailto:${data.profile.email}" style="color: var(--accent-primary); font-weight: 600;">${data.profile.email}</a>` : 'Not provided';
+                        const office = data.profile.office_room ? data.profile.office_room : 'Not specified';
+                        const phone = data.profile.phone_number ? data.profile.phone_number : 'Not specified';
+                        const hours = data.profile.consultation_hours ? data.profile.consultation_hours : 'Not specified';
+
+                        document.getElementById('profile-content').innerHTML = `
+                            <h2 style="color: var(--text-main); margin-top: 0; font-family: 'Poppins', sans-serif;">👨‍🏫 Lecturer Profile</h2>
+                            <p style="color: var(--accent-primary); font-weight: 600; font-size: 1.2em; margin-bottom: 25px;">${data.profile.name}</p>
+                            
+                            <div style="background: #F8FAFC; padding: 20px; border-radius: 12px; border: 1px solid #E2E8F0; line-height: 1.8; color: var(--text-main);">
+                                <p style="margin: 5px 0;"><strong>📚 Course:</strong> ${data.profile.course_name}</p>
+                                <p style="margin: 5px 0;"><strong>🚪 Office:</strong> ${office}</p>
+                                <p style="margin: 5px 0;"><strong>🕒 Consultation Hours:</strong> ${hours}</p>
+                                <hr style="border: 0; border-top: 1px dashed #CBD5E1; margin: 15px 0;">
+                                <p style="margin: 5px 0;"><strong>✉️ Email:</strong> ${email}</p>
+                                <p style="margin: 5px 0;"><strong>📞 Phone:</strong> ${phone}</p>
+                            </div>
+                        `;
+                    } else {
+                        document.getElementById('profile-content').innerHTML = '<p style="color: #DC2626;">Failed to load profile.</p>';
+                    }
+                });
+        }
+
+        function openNotificationsModal(courseId) {
+            document.getElementById('notifyModal').style.display = 'flex';
+            document.getElementById('notify-content').innerHTML = '<p style="color: var(--text-muted);">Checking reminders...</p>';
+            
+            fetch(`/student/api/notifications/${courseId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success) {
+                        if(data.reminders.length === 0) {
+                            document.getElementById('notify-content').innerHTML = `
+                                <h2 style="color: var(--text-main); margin-top: 0; font-family: 'Poppins', sans-serif;">🔔 Notifications</h2>
+                                <p style="color: #059669; font-weight: 600;">✅ You're all caught up! No pending assignments.</p>
+                            `;
+                            return;
+                        }
+
+                        let html = `
+                            <h2 style="color: var(--text-main); margin-top: 0; font-family: 'Poppins', sans-serif;">🔔 Notifications</h2>
+                            <p style="color: var(--text-muted); margin-bottom: 20px;">You have <strong>${data.reminders.length}</strong> pending tasks.</p>
+                        `;
+                        
+                        data.reminders.forEach(task => {
+                            const extraClass = task.is_overdue ? 'overdue' : 'warning';
+                            const statusText = task.is_overdue ? '⚠️ OVERDUE' : '⏳ PENDING';
+                            const statusColor = task.is_overdue ? '#DC2626' : '#D97706';
+                            
+                            html += `
+                                <div class="reminder-item ${extraClass}">
+                                    <div class="reminder-title">${task.title}</div>
+                                    <div class="reminder-meta">
+                                        <span style="color: ${statusColor}; font-weight: 600;">${statusText}</span> &nbsp;&bull;&nbsp; Due: ${task.due_date}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        document.getElementById('notify-content').innerHTML = html;
+                    } else {
+                        document.getElementById('notify-content').innerHTML = '<p style="color: #DC2626;">Failed to load reminders.</p>';
+                    }
+                });
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkedRadio = document.querySelector('input[name="classroom"]:checked');
+            if (checkedRadio) {
+                showStream(checkedRadio.value);
+                updateActionButtonLinks(checkedRadio.value);
+            }
+        });
+    </script>
+</head>
+<body>
+
+<div class="page">
+
+    <div class="sidebar">
+        <div class="user-profile">
+            <div class="user-icon">🎓</div>
+            <h3>{{ user.fullname | default('Student Name') }}</h3>
+        </div>
+        <a href="/student/dashboard/{{ session.get('username') }}" class="active">📊 Dashboard</a>
+        <a href="/change-password">🔒 Change Password</a>
+        <a href="/logout">🚪 Logout</a>
+    </div>
+
+    <div class="content">
+
+        <div class="header-container">
+            <h2 class="section-title">🎓 Student Dashboard</h2>
+            <p style="color: var(--text-muted); font-weight: 500; margin: 0;">Welcome back!</p>
+        </div>
+
+        <h3 style="font-family: 'Poppins', sans-serif; color: var(--text-main); font-size: 1.3em; margin-top: 30px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+            🏢 Select Classroom
+        </h3>
+        <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.95em;">Select a specific classroom to view its stream and tools.</p>
+        
+        <div class="course-selector-container">
+            {% for c in classrooms %}
+            <label class="course-option">
+                <input type="radio" name="classroom"
+                        value="{{ c.course_id }}"
+                        onclick="showStream({{c.course_id}}); updateActionButtonLinks({{c.course_id}});" 
+                        {% if loop.index == 1 %}checked{% endif %} >
+                {{ c.course_code }} : {{ c.course_name }}
+            </label>
+            {% endfor %} 
+        </div>
+        
+        <div class="dashboard-card">
+            <h4 style="margin-top: 0; color: var(--text-main); font-size: 1.2em; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                ⚙️ Course Tools & Actions
+            </h4>
+            
+            <div class="action-group">
+                <a class="btn-student" id="info-tab" href="#">ℹ️ Course Info</a>
+                <a class="btn-student" id="individual-tab" href="#">📝 Individual Activities</a>
+                <a class="btn-student" id="reports-tab" href="/student/my_reports">🛡️ Originality Reports</a>
+                
+                <button class="btn-student" id="lecturer-profile-tab">👨‍🏫 Lecturer Profile</button>
+                <button class="btn-student" id="notifications-tab">🔔 Notifications</button>
+            </div>
+        </div>
+
+        <h3 class="section-title" style="margin-bottom: 20px; font-size: 1.4em;">💬 Class Stream</h3>
+        
+        <div id="streamBox">
+            <div class="dashboard-card" style="text-align: center; color: var(--text-muted); padding: 50px;">
+                <p>Select a classroom to see updates</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="profileModal" class="modal-overlay">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('profileModal')">&times;</span>
+        <div id="profile-content"></div>
+    </div>
+</div>
+
+<div id="notifyModal" class="modal-overlay">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('notifyModal')">&times;</span>
+        <div id="notify-content"></div>
+    </div>
+</div>
+
+</body>
+</html>

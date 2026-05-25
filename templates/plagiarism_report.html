@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Plagiarism Matrix Report</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* 🎨 UNIQUE LECTURER THEME: Midnight Slate & Indigo */
+        :root {
+            --bg-main: #F4F7F9;
+            --sidebar-bg: #111827; 
+            --sidebar-hover: #1F2937;
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            --accent-primary: #4F46E5; 
+            --accent-secondary: #7C3AED; 
+            --card-bg: #FFFFFF;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+        }
+
+        h1, h2, h3, h4, h5, h6, .sidebar a, .btn {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .page {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* =========================================
+           SLEEK DARK SIDEBAR
+           ========================================= */
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            color: #fff;
+            padding: 40px 0;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .user-profile {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 0 20px;
+        }
+
+        .user-icon {
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 50%;
+            margin: 0 auto 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+        }
+
+        .user-profile h3 {
+            margin: 0;
+            font-size: 1.15em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: #F9FAFB;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 30px;
+            color: #9CA3AF;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: var(--sidebar-hover);
+            color: #FFFFFF;
+            border-left: 4px solid var(--accent-primary);
+            padding-left: 35px;
+        }
+
+        /* =========================================
+           MAIN CONTENT AREA
+           ========================================= */
+        .content {
+            flex-grow: 1;
+            padding: 50px;
+            margin-left: 260px; /* Offset for fixed sidebar */
+            max-width: 1200px;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #E2E8F0;
+            padding-bottom: 15px;
+        }
+
+        h2.section-title {
+            color: var(--text-main);
+            font-size: 1.8em;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.05em;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .btn-outline {
+            padding: 10px 20px;
+            background: transparent;
+            color: var(--text-muted);
+            border: 2px solid #E2E8F0;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.95em;
+            transition: all 0.2s;
+        }
+        .btn-outline:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+
+        /* =========================================
+           INFO BOXES & ALERTS
+           ========================================= */
+        .info-box {
+            background: #EEF2FF;
+            color: var(--accent-primary);
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+            border: 1px solid #C7D2FE;
+            line-height: 1.6;
+        }
+
+        /* =========================================
+           REPORT CARDS
+           ========================================= */
+        .report-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+        }
+        .report-card:hover { transform: translateY(-3px); box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.08); }
+
+        .header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .student-name { margin: 0; font-size: 1.3em; color: var(--text-main); font-weight: 700; }
+        .file-id { color: var(--text-muted); font-size: 0.9em; font-weight: 500; }
+
+        /* =========================================
+           TRAFFIC LIGHT COLOR CODING (Preserved & Polished)
+           ========================================= */
+        .border-high { border-left: 6px solid #DC2626; } /* Premium Red */
+        .border-med  { border-left: 6px solid #F59E0B; } /* Premium Amber */
+        .border-low  { border-left: 6px solid #059669; } /* Premium Green */
+
+        .percentage-badge {
+            display: inline-block;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-weight: 600;
+            color: white;
+            font-size: 0.95em;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.2s;
+            text-decoration: none;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        .percentage-badge:hover { transform: translateY(-2px); box-shadow: 0 8px 15px -3px rgba(0,0,0,0.15); }
+
+        .high-risk { background: #DC2626; } 
+        .med-risk  { background: #F59E0B; }  
+        .low-risk  { background: #059669; } 
+
+        /* =========================================
+           MATCHES LIST (Terminal Style)
+           ========================================= */
+        .matches-title { margin-bottom: 12px; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+        
+        .example-box {
+            background: #F8FAFC;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #E2E8F0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.95em;
+            color: #334155;
+            line-height: 1.6;
+        }
+        .example-box ul { margin: 10px 0 0 20px; padding: 0; }
+        .example-box li { margin-bottom: 5px; color: var(--accent-primary); font-weight: 500; }
+
+        /* =========================================
+           LOADING SPINNER
+           ========================================= */
+        #loader { 
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(5px);
+            z-index: 9999; 
+            justify-content: center; 
+            align-items: center; 
+            flex-direction: column;
+        }
+        .spinner { 
+            border: 6px solid #E2E8F0; 
+            border-top: 6px solid var(--accent-primary); 
+            border-radius: 50%; 
+            width: 70px; height: 70px; 
+            animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite; 
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        #loader p { font-family: 'Poppins', sans-serif; color: var(--text-main); margin-top: 25px; font-size: 1.1em; font-weight: 600; }
+    
+    /* =========================================
+           FLASH MESSAGES
+           ========================================= */
+        .flash { padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; }
+        .flash.success { background-color: #D1FAE5; color: #065F46; border: 1px solid #A7F3D0; }
+        .flash.danger { background-color: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
+        .flash.info, .flash.warning { background-color: #DBEAFE; color: #1E40AF; border: 1px solid #BFDBFE; }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="spinner"></div>
+        <p>Opening Detailed Originality Report... Please wait.</p>
+    </div>
+
+    <div class="page">
+        
+        <div class="sidebar">
+        <div class="user-profile">
+            <div class="user-icon">🎓</div>
+            <h3>{{ user.fullname | default('Lecturer Name') }}</h3>
+        </div>
+            
+            <a href="/lecturer/dashboard">📊 Dashboard</a>
+            <a href="/lecturer/change-password">🔒 Change Password</a>
+            <a href="/logout">🚪 Logout</a>
+        </div>
+
+        <div class="content">
+            
+            <div class="header-container" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #E2E8F0; padding-bottom: 15px; margin-bottom: 20px;">
+    <h2 class="section-title" style="margin: 0; color: #1E293B;">📊 Plagiarism Matrix Report</h2>
+    
+    <div style="display: flex; gap: 15px; align-items: center;">
+        <form action="/lecturer/send_all_reports/{{ activity_id }}" method="POST" onsubmit="return confirm('Are you sure you want to instantly publish all calculated originality reports to the students\' dashboards?');" style="margin: 0;">
+            <button type="submit" class="btn" style="background: linear-gradient(135deg, #10B981, #059669); color: white; border: none; padding: 10px 20px; font-weight: bold; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); transition: transform 0.2s;">
+                📤 Publish All Reports
+            </button>
+        </form>
+        
+        <a href="/lecturer/view_submissions/{{ activity_id }}" class="btn btn-outline" style="padding: 10px 20px; text-decoration: none; border-radius: 8px;">&larr; Back to Submissions</a>
+    </div>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash {{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+                <p class="subtitle">Activity: <strong>{{ activity_title }}</strong> &nbsp;|&nbsp; Analysis: <strong>Unified Sequence Matching</strong></p>
+
+                {% include 'tamper_banner.html' %}
+                
+            <div class="info-box">
+                💡 <b>How to read this:</b> Every submitted file is analyzed as a <b>Primary Document</b> against all others. Click the percentage badge to view the line-by-line proof for that specific file.
+            </div>
+
+            {% if results %}
+                {% for result in results %}
+                
+                <div class="report-card 
+                    {% if result.overall_score > 60 %}border-high
+                    {% elif result.overall_score > 25 %}border-med
+                    {% else %}border-low{% endif %}">
+                    
+                    <div class="header-flex">
+                        <div>
+                            <h2 class="student-name">Student: {{ result.student_name }}</h2>
+                            <span class="file-id">Primary File ID: #{{ result.primary_sub_id }}</span>
+                        </div>
+                        
+                        <a href="/lecturer/originality_report/{{ result.primary_sub_id }}" 
+                           onclick="document.getElementById('loader').style.display='flex';" 
+                           style="text-decoration: none;">
+                            
+                            <span class="percentage-badge 
+                                {% if result.overall_score > 60 %}high-risk
+                                {% elif result.overall_score > 25 %}med-risk
+                                {% else %}low-risk{% endif %}">
+                                
+                                {% if result.overall_score > 60 %}
+                                    ⚠️ High Similarity ({{ result.overall_score | round(1) }}%)
+                                {% elif result.overall_score > 25 %}
+                                    ⚠️ Moderate Similarity ({{ result.overall_score | round(1) }}%)
+                                {% else %}
+                                    ✅ Low Similarity ({{ result.overall_score | round(1) }}%)
+                                {% endif %}
+                                &nbsp; | View Proof
+                            </span>
+                        </a>
+                    </div>
+                    
+                    <div class="matches-title">
+                        🔍 Comparisons for this file:
+                    </div>
+                    
+                    <div class="example-box">
+                        {% if result.matches %}
+                            <span style="color: var(--text-main);">Matches found against these sources in the repository:</span>
+                            <ul>
+                            {% for match in result.matches %}
+                                <li>{{ match.source_name }} &rarr; <span style="color: #64748B;">({{ match.score | round(1) }}% match)</span></li>
+                            {% endfor %}
+                            </ul>
+                        {% else %}
+                            <span style="color: #94A3B8; font-style: italic;">No significant matches found against other documents in this activity.</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="report-card" style="text-align: center; color: var(--text-muted); padding: 50px;">
+                    <h2 style="font-family: 'Poppins', sans-serif; color: var(--text-main);">✅ Analysis Complete</h2>
+                    <p>No student submissions found to analyze for this activity.</p>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+</body>
+</html>

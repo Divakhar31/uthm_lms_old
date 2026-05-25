@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Submissions - {{ activity.title }}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* 🎨 UNIQUE LECTURER THEME: Midnight Slate & Indigo */
+        :root {
+            --bg-main: #F4F7F9;
+            --sidebar-bg: #111827; 
+            --sidebar-hover: #1F2937;
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            --accent-primary: #4F46E5; 
+            --accent-secondary: #7C3AED; 
+            --card-bg: #FFFFFF;
+            --danger: #DC2626;
+            --success: #059669;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+        }
+
+        /* Headings Font Override */
+        h1, h2, h3, h4, h5, h6, .sidebar a, .btn {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .page {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* =========================================
+           SLEEK DARK SIDEBAR
+           ========================================= */
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            color: #fff;
+            padding: 40px 0;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .user-profile {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 0 20px;
+        }
+
+        .user-icon {
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 50%;
+            margin: 0 auto 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+        }
+
+        .user-profile h3 {
+            margin: 0;
+            font-size: 1.15em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: #F9FAFB;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 30px;
+            color: #9CA3AF;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: var(--sidebar-hover);
+            color: #FFFFFF;
+            border-left: 4px solid var(--accent-primary);
+            padding-left: 35px;
+        }
+
+        /* =========================================
+           MAIN CONTENT AREA
+           ========================================= */
+        .content {
+            flex-grow: 1;
+            padding: 50px;
+            margin-left: 260px; /* Offset for fixed sidebar */
+            max-width: 1200px;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #E2E8F0;
+            padding-bottom: 15px;
+        }
+
+        h2.section-title {
+            color: var(--text-main);
+            font-size: 1.8em;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.05em;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        /* =========================================
+           CARDS & DASHBOARD ELEMENTS
+           ========================================= */
+        .dashboard-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            margin-bottom: 35px;
+            border: 1px solid #F1F5F9;
+        }
+
+        .plagiarism-box {
+            border-top: 5px solid var(--accent-secondary);
+            background: linear-gradient(to right, #ffffff, #F8FAFC);
+        }
+
+        .plagiarism-box h4 {
+            margin-top: 0;
+            color: var(--text-main);
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .plagiarism-box p {
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        /* =========================================
+           BUTTONS
+           ========================================= */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.95em;
+            transition: all 0.2s;
+        }
+
+        .btn-check {
+            background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
+            color: white;
+            padding: 12px 25px;
+            font-size: 1.05em;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+        }
+        .btn-check:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4); }
+
+        .btn-download {
+            background: #EEF2FF;
+            color: var(--accent-primary);
+            border: 1px solid #C7D2FE;
+            padding: 8px 16px;
+            font-size: 0.85em;
+        }
+        .btn-download:hover { background: #E0E7FF; transform: translateY(-2px); }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-muted);
+            border: 2px solid #E2E8F0;
+        }
+        .btn-outline:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+
+        /* =========================================
+           DATA TABLE
+           ========================================= */
+        .table-custom {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .table-custom th {
+            background: #F8FAFC;
+            color: var(--text-muted);
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        .table-custom td {
+            padding: 16px;
+            border-bottom: 1px solid #F1F5F9;
+            color: var(--text-main);
+            vertical-align: middle;
+        }
+
+        .table-custom tr:last-child td { border-bottom: none; }
+        .table-custom tbody tr:hover { background: #F8FAFC; }
+
+        .file-name { font-family: 'Consolas', monospace; color: var(--accent-primary); font-size: 0.95em; }
+
+        /* Status Badges */
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .badge-danger { background: #FEE2E2; color: var(--danger); border: 1px solid #FECACA; }
+        .badge-success { background: #D1FAE5; color: var(--success); border: 1px solid #A7F3D0; }
+        .badge-pending { background: #F1F5F9; color: var(--text-muted); border: 1px solid #E2E8F0; }
+
+        /* =========================================
+           FLASH MESSAGES
+           ========================================= */
+        .flash { padding: 16px 20px; border-radius: 12px; margin-bottom: 25px; font-weight: 600; font-family: 'Poppins', sans-serif; }
+        .flash.info { background: #DBEAFE; color: #1E40AF; border: 1px solid #BFDBFE; }
+        .flash.success { background: #D1FAE5; color: #065F46; border: 1px solid #A7F3D0; }
+        .flash.danger { background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
+
+    </style>
+</head>
+<body>
+
+<div class="page">
+    
+    <div class="sidebar">
+        <div class="user-profile">
+            <div class="user-icon">🎓</div>
+            <h3>{{ user.fullname | default('Lecturer Name') }}</h3>
+        </div>
+        
+        <a href="/lecturer/dashboard/{{ activity.course_id }}">📊 Dashboard</a>
+        <a href="/lecturer/change-password">🔒 Change Password</a>
+        <a href="/logout">🚪 Logout</a>
+    </div>
+
+    <div class="content">
+
+        <div class="header-container">
+            <h2 class="section-title">📂 Submissions: {{ activity.title }}</h2>
+            <a href="/lecturer/activities/individual/{{ activity.course_id }}" class="btn btn-outline">&larr; Back to Activities</a>
+        </div>
+        <p class="subtitle">Course: <strong>{{ activity.course_code }}</strong> &nbsp;|&nbsp; Due Date: <strong>{{ activity.due_date.strftime('%Y-%m-%d %H:%M') }}</strong></p>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="flash {{ category }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% set ns = namespace(report_ready=false) %}
+        {% for sub in submissions %}
+            {% if sub.plagiarism_score is not none %}
+                {% set ns.report_ready = true %}
+            {% endif %}
+        {% endfor %}
+
+        {% if db_tampered %}
+        <div style="background: #7F1D1D; color: #FEF2F2; padding: 18px 25px; border-radius: 12px; border: 1px solid #991B1B; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 15px -3px rgba(220, 38, 38, 0.25);">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span style="font-size: 2em; line-height: 1;">🚨</span>
+                <div>
+                    <strong style="font-family: 'Poppins', sans-serif; font-size: 1.2em; display: block; margin-bottom: 3px;">DATABASE TAMPERING DETECTED!</strong>
+                    <span style="font-size: 0.95em; opacity: 0.9;">The SQL Database does not match the immutable blockchain ledger.</span>
+                </div>
+            </div>
+            <a href="/lecturer/blockchain_audit_activity/{{ activity_id }}" style="background: #FFFFFF; color: #991B1B; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; font-family: 'Poppins', sans-serif; transition: all 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                View Audit Trail &rarr;
+            </a>
+        </div>
+        {% endif %}
+
+        <div class="dashboard-card plagiarism-box">
+            <h4>🛡️ Plagiarism Control Center</h4>
+            <p>Running the check will perform a <b>Matrix Comparison</b> (TF-IDF + Cosine Similarity) and <b>AI Content Detection</b> across all student files. This process runs securely in the background and saves to the database.</p>
+            
+            <div style="display: flex; gap: 15px; align-items: center;">
+                
+                <button id="run-check-btn" class="btn btn-check" onclick="startBatchCheck({{ activity_id }})">
+                    {% if ns.report_ready %}
+                        🔄 Re-Run Batch Check
+                    {% else %}
+                        🚀 Run Automated Batch Check
+                    {% endif %}
+                </button>
+
+                {% if ns.report_ready %}
+                    <a href="/lecturer/matrix_report/{{ activity_id }}" class="btn" style="background: #EEF2FF; color: var(--accent-primary); border: 2px solid var(--accent-primary);">
+                        📊 View Matrix Report
+                    </a>
+                {% else %}
+                    <button class="btn" style="background: #F1F5F9; color: #94A3B8; border: 2px solid #CBD5E1; cursor: not-allowed;" onclick="alert('Please Run the Automated Batch Check first to generate and save the report!');">
+                        📊 View Matrix Report
+                    </button>
+                {% endif %}
+                
+            </div>
+
+            <div id="progress-container" style="display: none; margin-top: 25px; background: #fff; padding: 25px; border-radius: 8px; border: 1px solid #E2E8F0; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                <h4 style="margin-top: 0; color: var(--accent-primary); font-family: 'Poppins', sans-serif;">Running Matrix Analysis...</h4>
+                <div style="width: 100%; background-color: #E2E8F0; border-radius: 6px; overflow: hidden; height: 24px; position: relative;">
+                    <div id="progress-bar" style="width: 0%; height: 100%; background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary)); transition: width 0.4s ease;"></div>
+                </div>
+                <p id="progress-text" style="text-align: center; margin-top: 12px; margin-bottom: 0; font-weight: 600; color: var(--text-muted);">0% Complete</p>
+            </div>
+        </div>
+
+        <h3 style="font-family: 'Poppins', sans-serif; color: var(--text-main); margin-bottom: 20px;">Student Submissions</h3>
+
+        {% if submissions %}
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Student Name</th>
+                        <th>Submitted File</th>
+                        <th>Submitted On</th>
+                        <th>Match Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for submission in submissions %}
+                        <tr>
+                            <td style="font-weight: 600; color: var(--text-muted);">{{ loop.index }}</td>
+                            <td style="font-weight: 500;">{{ submission.student_name }}</td>
+                            <td class="file-name">{{ submission.file_name }}</td>
+                            <td style="color: var(--text-muted); font-size: 0.95em;">{{ submission.submitted_on.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                {% if submission.plagiarism_score is not none %}
+                                {% if submission.plagiarism_score > 30 %}
+                                <span class="badge badge-danger">⚠️ {{ "%.1f"|format(submission.plagiarism_score) }}% Match</span>
+                                 {% else %}
+                                  <span class="badge badge-success">✅ {{ "%.1f"|format(submission.plagiarism_score) }}% Match</span>
+                                 {% endif %}
+                                    {% else %}
+                                        <span class="badge badge-pending">⏳ Pending Check</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="/download/submission/{{ submission.submission_id }}" class="btn btn-download">
+                                    ⬇️ Download
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="dashboard-card" style="text-align: center; color: var(--text-muted); padding: 40px; margin-top: 20px;">
+                <h3 style="font-family: 'Poppins', sans-serif;">No Submissions Yet</h3>
+                <p>Students have not uploaded any files for this activity.</p>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<script>
+    function startBatchCheck(activityId) {
+        // Hide the button, show the progress bar
+        document.getElementById('run-check-btn').style.display = 'none';
+        document.getElementById('progress-container').style.display = 'block';
+
+        // Tell the server to start the background math
+        fetch(`/lecturer/api/start_plagiarism_check/${activityId}`, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // If it successfully started, begin pinging for progress!
+                    pollProgress(data.task_id, activityId);
+                } else {
+                    alert("Error starting check: " + data.error);
+                    location.reload(); // Reset UI
+                }
+            })
+            .catch(error => {
+                alert("Server Connection Error. Check your console.");
+                location.reload();
+            });
+    }
+
+    function pollProgress(taskId, activityId) {
+        // Ping the server every 1 second (1000ms)
+        let interval = setInterval(() => {
+            fetch(`/lecturer/api/check_progress/${taskId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'processing') {
+                        // Update the width and text of the progress bar
+                        document.getElementById('progress-bar').style.width = data.progress + '%';
+                        document.getElementById('progress-text').innerText = data.progress + '% Complete';
+                    } 
+                    else if (data.status === 'completed') {
+                        // It's done! Fill the bar and redirect to the final report
+                        clearInterval(interval);
+                        document.getElementById('progress-bar').style.width = '100%';
+                        document.getElementById('progress-text').innerText = '100% - Matrix Compiled! Redirecting...';
+                        
+                        setTimeout(() => {
+                            window.location.href = `/lecturer/matrix_report/${activityId}`;
+                        }, 800); // 800ms delay so the user gets to see it hit 100%
+                    }
+                    else if (data.status === 'error') {
+                        clearInterval(interval);
+                        alert("System Error during processing: " + data.error);
+                        location.reload();
+                    }
+                });
+        }, 1000);
+    }
+</script>
+
+</body>
+</html>

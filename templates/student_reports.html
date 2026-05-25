@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Plagiarism Reports</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* 🎨 THEME: STUDENT ROYAL BLUE ACCENT */
+        :root {
+            --bg-main: #F4F7F9; --sidebar-bg: #111827; --sidebar-hover: #1F2937;
+            --text-main: #1E293B; --text-muted: #64748B;
+            --accent-primary: #2563EB; --accent-secondary: #3B82F6; --card-bg: #FFFFFF;
+        }
+
+        body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; background: var(--bg-main); color: var(--text-main); }
+        h1, h2, h3, h4, h5, h6, .sidebar a, .btn-download { font-family: 'Poppins', sans-serif; }
+        .page { display: flex; min-height: 100vh; }
+
+        /* SIDEBAR */
+        .sidebar { width: 260px; background: var(--sidebar-bg); color: #fff; padding: 40px 0; box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100; }
+        .user-profile { text-align: center; margin-bottom: 40px; padding: 0 20px; }
+        .user-icon { width: 65px; height: 65px; background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); border-radius: 50%; margin: 0 auto 15px auto; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1); }
+        .user-profile h3 { margin: 0; font-size: 1.15em; font-weight: 600; letter-spacing: 0.5px; color: #F9FAFB; }
+        .sidebar a { display: block; padding: 15px 30px; color: #9CA3AF; text-decoration: none; font-weight: 500; transition: all 0.3s ease; border-left: 4px solid transparent; }
+        .sidebar a:hover, .sidebar a.active { background: var(--sidebar-hover); color: #FFFFFF; border-left: 4px solid var(--accent-primary); padding-left: 35px; }
+
+        /* MAIN CONTENT */
+        .content { flex-grow: 1; padding: 50px; margin-left: 260px; max-width: 1200px; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 2px solid #E2E8F0; padding-bottom: 15px; }
+        h2.section-title { color: var(--text-main); font-size: 1.8em; font-weight: 700; margin: 0; }
+        .btn-back { padding: 10px 20px; background: transparent; color: var(--text-muted); border: 2px solid #E2E8F0; border-radius: 8px; text-decoration: none; font-weight: 600; font-family: 'Poppins', sans-serif; transition: all 0.2s; }
+        .btn-back:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+
+        /* CARDS */
+        .report-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; margin-bottom: 40px;}
+        .report-card { background: var(--card-bg); border-radius: 16px; padding: 25px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); border: 1px solid #E2E8F0; transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; justify-content: space-between; }
+        .report-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px -5px rgba(0,0,0,0.08); border-color: #BFDBFE; }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px dashed #E2E8F0; padding-bottom: 15px; margin-bottom: 20px; }
+        .activity-name { color: var(--text-main); font-size: 1.1em; font-weight: 700; line-height: 1.3; }
+        .date { color: var(--text-muted); font-size: 0.85em; font-weight: 500; white-space: nowrap; margin-left: 15px; }
+        
+        .score-circle { width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6em; font-weight: 800; color: white; margin: 0 auto 10px auto; font-family: 'Poppins', sans-serif; border: 4px solid white; }
+        .score-high { background: linear-gradient(135deg, #EF4444, #B91C1C); box-shadow: 0 8px 15px rgba(239, 68, 68, 0.3); }
+        .score-med  { background: linear-gradient(135deg, #F59E0B, #B45309); box-shadow: 0 8px 15px rgba(245, 158, 11, 0.3); }
+        .score-low  { background: linear-gradient(135deg, #10B981, #047857); box-shadow: 0 8px 15px rgba(16, 185, 129, 0.3); }
+
+        .score-label { text-align: center; color: var(--text-muted); font-weight: 600; font-size: 0.9em; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .feedback-box { background: #F8FAFC; border-left: 4px solid var(--accent-primary); padding: 15px; border-radius: 0 8px 8px 0; margin-bottom: 25px; font-size: 0.95em; color: var(--text-main); line-height: 1.6; }
+        .feedback-title { font-size: 0.85em; text-transform: uppercase; color: var(--accent-primary); font-weight: 700; margin-bottom: 8px; display: block; letter-spacing: 0.5px;}
+        .btn-download { display: block; width: 100%; text-align: center; background: white; color: var(--accent-primary); border: 2px solid #DBEAFE; text-decoration: none; padding: 12px 0; border-radius: 8px; font-weight: 600; transition: all 0.3s; box-sizing: border-box; }
+        .btn-download:hover { background: var(--accent-primary); color: white; border-color: var(--accent-primary); box-shadow: 0 8px 15px rgba(37, 99, 235, 0.2);}
+    </style>
+</head>
+<body>
+
+<div class="page">
+    
+    <div class="sidebar">
+        <div class="user-profile">
+            <div class="user-icon">🎓</div>
+            <h3>{{ user.fullname | default('Student Name') }}</h3>
+        </div>
+        
+        <a href="/student/dashboard/{{ session['username'] }}">📊 Dashboard</a>
+        <a href="/student/change-password">🔒 Change Password</a>
+        <a href="/logout">🚪 Logout</a>
+    </div>
+
+    <div class="content">
+        <div class="header-container">
+            <div>
+                <h2 class="section-title">🛡️ My Originality Reports</h2>
+                <div style="color: var(--text-muted); font-weight: 500; margin-top: 5px;">{{ course.course_code }}: {{ course.course_name }}</div>
+            </div>
+            <a href="/student/dashboard/{{ session['username'] }}" class="btn-back">&larr; Back to Dashboard</a>
+        </div>
+
+        {% if reports %}
+            <div class="report-grid">
+                {% for report in reports %}
+                <div class="report-card">
+                    <div>
+                        <div class="card-header">
+                            <div class="activity-name">{{ report.title | default('Activity #' ~ report.activity_id) }}</div>
+                            <div class="date">{{ report.shared_on.strftime('%b %d, %Y') }}</div>
+                        </div>
+                        
+                        <div class="score-circle 
+                            {% if report.similarity_score > 60 %}score-high
+                            {% elif report.similarity_score > 25 %}score-med
+                            {% else %}score-low{% endif %}">
+                            {{ report.similarity_score }}%
+                        </div>
+                        <div class="score-label">Similarity Index</div>
+
+                        <div class="feedback-box">
+                            <span class="feedback-title">Lecturer Feedback</span>
+                            {% if report.lecturer_comment %}
+                                "{{ report.lecturer_comment }}"
+                            {% else %}
+                                <span style="color: #94A3B8; font-style: italic;">No additional comments provided.</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <a href="/student/download_report/{{ report.submission_id }}" class="btn-download">📄 Download Full PDF Report</a>
+                </div>
+                {% endfor %}
+            </div>
+
+        {% else %}
+            <div style="text-align: center; padding: 60px; background: white; border-radius: 16px; border: 1px solid #E2E8F0; color: var(--text-muted);">
+                <div style="font-size: 50px; margin-bottom: 15px;">📭</div>
+                <h2 style="color: var(--text-main); font-family: 'Poppins', sans-serif; margin-top: 0;">No Reports Shared Yet</h2>
+                <p style="font-weight: 500;">When a lecturer reviews your assignment for <b>{{ course.course_code }}</b> and publishes the originality report, it will automatically appear here.</p>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+</body>
+</html>

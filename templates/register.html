@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Register - UTHM Portal</title>
+    <style>
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(-45deg, #1A2980, #26D0CE, #0052D4, #4364F7); background-size: 400% 400%; animation: gradientBG 15s ease infinite; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px;}
+        
+        /* Made the card slightly taller to fit the password rules comfortably */
+        .register-square { width: 550px; min-height: 600px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 24px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); padding: 35px 40px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+        .header { text-align: center; }
+        .header h1 { margin: 0; color: #1A2980; font-size: 2em; font-weight: 800; letter-spacing: -0.5px; }
+        .header p { color: #666; margin: 5px 0 15px 0; font-size: 0.9em; font-weight: 500; }
+        
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px; }
+        .full-width { grid-column: 1 / -1; }
+        
+        input, select { width: 100%; padding: 12px 14px; background: #f4f7f6; border: 2px solid transparent; border-radius: 10px; box-sizing: border-box; font-size: 0.95em; font-family: inherit; color: #333; transition: all 0.3s ease; }
+        input::placeholder { color: #aaa; font-weight: 500; }
+        select { color: #555; cursor: pointer; }
+        input:focus, select:focus { background: #fff; border: 2px solid #26D0CE; box-shadow: 0 4px 15px rgba(38, 208, 206, 0.2); outline: none; }
+        
+        .btn.primary { background: linear-gradient(to right, #1A2980, #26D0CE); color: white; border: none; padding: 14px; width: 100%; border-radius: 12px; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+        .btn.primary:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(38, 208, 206, 0.4); }
+        .footer { text-align: center; font-size: 0.9em; margin-top: 10px; }
+        .footer a { color: #1A2980; text-decoration: none; font-weight: 700; transition: color 0.2s; }
+        .footer a:hover { color: #26D0CE; }
+        
+        .flash-container { position: absolute; top: -60px; left: 0; width: 100%; text-align: center; z-index: 10; }
+        .flash { display: inline-block; padding: 10px 20px; border-radius: 30px; font-weight: bold; font-size: 0.9em; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .flash.danger, .flash.error { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+        .flash.success { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+
+        /* PASSWORD REQUIREMENTS CSS */
+        .password-reqs { margin-top: -5px; margin-bottom: 10px; padding: 10px 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #eee; }
+        .password-reqs p { margin: 0 0 5px 0; font-size: 0.85em; font-weight: bold; color: #444; }
+        .req-list { list-style-type: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+        .req-list li { font-size: 0.8em; color: #999; transition: color 0.3s ease; display: flex; align-items: center; }
+        .req-list li::before { content: '○'; margin-right: 5px; font-size: 1.2em; line-height: 1; }
+        .req-list li.valid { color: #2e7d32; font-weight: bold; }
+        .req-list li.valid::before { content: '●'; color: #2e7d32; }
+    </style>
+</head>
+<body>
+    <div class="register-square">
+        <div class="flash-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}{% for category, message in messages %}
+                    <div class="flash {{ category if category != 'error' else 'danger' }}">{{ message }}</div>
+                {% endfor %}{% endif %}
+            {% endwith %}
+        </div>
+
+        <div class="header">
+            <h1>Create Account</h1>
+            <p>Register as a student or lecturer</p>
+        </div>
+
+        <form action="/register" method="POST" id="registerForm">
+            <div class="input-grid">
+                <div class="full-width"><input type="text" name="fullname" required placeholder="Full Name (e.g., John Doe)"></div>
+                <div><input type="text" name="username" required placeholder="Username"></div>
+                <div><input type="email" name="email" required placeholder="Email Address"></div>
+                <div>
+                    <select id="role" name="role" onchange="updateMatricLabel()" required>
+                        <option value="student">Student</option>
+                        <option value="lecturer">Lecturer</option>
+                    </select>
+                </div>
+                <div><input type="text" id="matric_no" name="matric_no" required placeholder="Matric Number"></div>
+                
+                <div class="full-width"><input type="password" id="password" name="password" required placeholder="Create Password"></div>
+                
+                <div class="full-width password-reqs">
+                    <p>Password Must Contain:</p>
+                    <ul class="req-list">
+                        <li id="req-len">8+ Characters</li>
+                        <li id="req-up">1 Uppercase</li>
+                        <li id="req-low">1 Lowercase</li>
+                        <li id="req-num">1 Number</li>
+                        <li id="req-spc">1 Special Char</li>
+                    </ul>
+                </div>
+
+                <div class="full-width"><input type="password" id="confirm_password" name="confirm_password" required placeholder="Confirm Password"></div>
+            </div>
+            <button type="submit" class="btn primary">Register Account</button>
+        </form>
+
+        <div class="footer"><span style="color: #666;">Already have an account?</span> <a href="/login">Log in here</a></div>
+    </div>
+
+    <script>
+        // Adjust Placeholder
+        function updateMatricLabel() {
+            const role = document.getElementById('role').value;
+            const input = document.getElementById('matric_no');
+            input.placeholder = role === 'lecturer' ? 'Staff Number (e.g., L001)' : 'Matric Number (e.g., S001)';
+        }
+
+        // Real-time Password Validation
+        const pwdInput = document.getElementById('password');
+        const reqs = {
+            len: { el: document.getElementById('req-len'), regex: /.{8,}/ },
+            up: { el: document.getElementById('req-up'), regex: /[A-Z]/ },
+            low: { el: document.getElementById('req-low'), regex: /[a-z]/ },
+            num: { el: document.getElementById('req-num'), regex: /[0-9]/ },
+            spc: { el: document.getElementById('req-spc'), regex: /[!@#$%^&*(),.?":{}|<>]/ }
+        };
+
+        pwdInput.addEventListener('input', function() {
+            const val = pwdInput.value;
+            for (let key in reqs) {
+                if (reqs[key].regex.test(val)) {
+                    reqs[key].el.classList.add('valid');
+                } else {
+                    reqs[key].el.classList.remove('valid');
+                }
+            }
+        });
+
+        // Prevent submission if all requirements aren't met
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            const val = pwdInput.value;
+            let isValid = true;
+            for (let key in reqs) {
+                if (!reqs[key].regex.test(val)) isValid = false;
+            }
+            if (!isValid) {
+                e.preventDefault();
+                alert('Please ensure your password meets all security requirements before registering.');
+            }
+        });
+    </script>
+</body>
+</html>
