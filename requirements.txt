@@ -1,6 +1,10 @@
 Flask
 mysql-connector-python
+werkzeug
+itsdangerous
 PyPDF2
 docx2txt
-gunicorn
+pdfkit
+pyotp
 scikit-learn
+gunicorn
