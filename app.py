@@ -546,6 +546,19 @@ def send_email(receiver_email, code):
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, message)
 
+# ====================== SMART HOMEPAGE ROUTER ======================
+@app.route('/')
+def index():
+    # If they are already fully logged in, send them to their dashboard
+    if 'username' in session and 'role' in session:
+        if session.get('role') == 'lecturer':
+            return redirect('/lecturer/dashboard')
+        elif session.get('role') == 'student':
+            return redirect(f"/student/dashboard/{session.get('username')}")
+    
+    # Otherwise, force them to log in
+    return redirect(url_for('login'))
+
 # ====================== LOGIN ======================
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -781,9 +794,10 @@ def verify():
     return render_template('verify.html')
 
 # ====================== STUDENT DASHBOARD ======================
-@app.route("/student/dashboard/<string:student_id>")
-def student_dashboard(student_id):
-    if 'username' not in session or session.get('role') != 'student':
+@app.route("/student/dashboard/<string:student_username>")
+def student_dashboard(student_username):
+    # Security check: Make sure they are logged in AND their session matches the URL
+    if 'username' not in session or session.get('role') != 'student' or session.get('username') != student_username:
         return redirect('/')
 
     username = session.get("username")
