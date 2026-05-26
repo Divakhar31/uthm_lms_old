@@ -974,7 +974,7 @@ def student_submit_activity():
             query = """
             INSERT INTO submissions 
             (student_username, course_id, activity_id, file_name, submitted_on, submitted_at, extracted_text)
-            VALUES (%s, %s, %s, %s, NOW(), NOW(), %s)
+            VALUES (%s, %s, %s, %s, CONVERT_TZ(NOW(), '+00:00', '+08:00'), CONVERT_TZ(NOW(), '+00:00', '+08:00'), %s)
             """
             cursor.execute(query, (
                 student_username, 
