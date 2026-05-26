@@ -2273,14 +2273,15 @@ def student_download_report(submission_id):
                                         content=full_html,
                                         now=datetime.now().strftime("%B %d, %Y"))
 
-        import pdfkit
-        from flask import make_response
-       if platform.system() == 'Windows':
+       import pdfkit
+       from flask import make_response
+
+        if platform.system() == 'Windows':
             path_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
         else:
-            # Use the local Linux folder we built using the render-build.sh script!
+             # Use the local Linux folder...
             path_wkhtmltopdf = os.path.join(os.getcwd(), 'wkhtmltopdf_folder', 'usr', 'local', 'bin', 'wkhtmltopdf')
-            
+
         config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
 
         # Options to make the PDF look like a clean A4 document
