@@ -5,12 +5,11 @@ set -o errexit
 # 1. Install your standard Python libraries
 pip install -r requirements.txt
 
-# 2. Download the Linux version of wkhtmltopdf
-echo "Downloading wkhtmltopdf for Linux..."
-wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_amd64.deb
+# 2. Download the STATIC generic Linux version of wkhtmltopdf
+echo "Downloading static wkhtmltopdf..."
+wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
 
-# 3. Extract it directly into your project folder so app.py can find it!
-dpkg -x wkhtmltox_0.12.6-1.focal_amd64.deb wkhtmltopdf_folder
-chmod +x wkhtmltopdf_folder/usr/local/bin/wkhtmltopdf
+# 3. Extract it (This creates a folder named 'wkhtmltox')
+tar vxf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
 
 echo "Custom Build complete!"
