@@ -22,6 +22,7 @@ import io
 import concurrent.futures
 import re
 import pdfkit
+import platform
 import pyotp
 import urllib.parse 
 import threading
@@ -1959,10 +1960,15 @@ def download_plagiarism_report(target_id):
                                         now=datetime.now().strftime("%B %d, %Y"))
 
         # 6. Convert to PDF and trigger download
-        # NOTE: Update this path if you installed wkhtmltopdf somewhere else!
-        path_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+        # Automatically detect if we are on Windows (Local) or Linux (Render)
+        if platform.system() == 'Windows':
+            path_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+        else:
+            # Use the local Linux folder we built using the render-build.sh script!
+            path_wkhtmltopdf = os.path.join(os.getcwd(), 'wkhtmltopdf_folder', 'usr', 'local', 'bin', 'wkhtmltopdf')
+            
         config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
-        
+
         # Options to make the PDF look like a clean A4 document
         options = {
             'page-size': 'A4',
@@ -1973,7 +1979,7 @@ def download_plagiarism_report(target_id):
             'encoding': "UTF-8",
             'no-outline': None
         }
-        
+
         pdf = pdfkit.from_string(rendered_html, False, configuration=config, options=options)
 
         response = make_response(pdf)
@@ -2269,9 +2275,25 @@ def student_download_report(submission_id):
 
         import pdfkit
         from flask import make_response
-        path_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+       if platform.system() == 'Windows':
+            path_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+        else:
+            # Use the local Linux folder we built using the render-build.sh script!
+            path_wkhtmltopdf = os.path.join(os.getcwd(), 'wkhtmltopdf_folder', 'usr', 'local', 'bin', 'wkhtmltopdf')
+            
         config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
-        options = {'page-size': 'A4', 'margin-top': '0.75in', 'margin-right': '0.75in', 'margin-bottom': '0.75in', 'margin-left': '0.75in', 'encoding': "UTF-8", 'no-outline': None}
+
+        # Options to make the PDF look like a clean A4 document
+        options = {
+            'page-size': 'A4',
+            'margin-top': '0.75in',
+            'margin-right': '0.75in',
+            'margin-bottom': '0.75in',
+            'margin-left': '0.75in',
+            'encoding': "UTF-8",
+            'no-outline': None
+        }
+
         pdf = pdfkit.from_string(rendered_html, False, configuration=config, options=options)
 
         response = make_response(pdf)
