@@ -1,0 +1,39 @@
+[
+    {
+        "index": 1,
+        "timestamp": 1776922765.4917085,
+        "logs": [],
+        "proof": 100,
+        "previous_hash": "1"
+    },
+    {
+        "index": 2,
+        "timestamp": 1776922765.5852118,
+        "logs": [
+            {
+                "sender": "lect1",
+                "recipient": 12,
+                "event_type": "ACTIVITY_CREATED",
+                "details": "Title: project3, Type: individual, File: None",
+                "log_timestamp": "2026-04-23 13:39:25"
+            }
+        ],
+        "proof": 35293,
+        "previous_hash": "c6af57d1b07f53b88f3d1b942158c729bb656446ac8bf760e351989e677d84c3"
+    },
+    {
+        "index": 3,
+        "timestamp": 1779396548.088348,
+        "logs": [
+            {
+                "sender": "lect1",
+                "recipient": 12,
+                "event_type": "ACTIVITY_DELETED",
+                "details": "Activity ID 12 and all related submissions removed.",
+                "log_timestamp": "2026-05-22 04:49:08"
+            }
+        ],
+        "proof": 35089,
+        "previous_hash": "575e8d493ca73d1abc5ee866d759bcfac9322a06c2a3a921508dc5041faadbdb"
+    }
+]

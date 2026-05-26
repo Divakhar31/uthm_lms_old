@@ -1,0 +1,114 @@
+[
+    {
+        "index": 1,
+        "timestamp": 1768154710.1283603,
+        "logs": [],
+        "proof": 100,
+        "previous_hash": "1"
+    },
+    {
+        "index": 2,
+        "timestamp": 1768154710.1675456,
+        "logs": [
+            {
+                "sender": "lect1",
+                "recipient": 8,
+                "event_type": "ACTIVITY_CREATED",
+                "details": "Title: Assignment 2, Type: individual, File: task_5_1768154710.pdf",
+                "log_timestamp": "2026-01-12 02:05:10"
+            }
+        ],
+        "proof": 35293,
+        "previous_hash": "9c7c6dca2454ae4c5b30ac1d9cb7755b2a648ee45efd00b807f2b7c24c3b1a00"
+    },
+    {
+        "index": 3,
+        "timestamp": 1768157200.2323353,
+        "logs": [
+            {
+                "sender": "stud2",
+                "recipient": 8,
+                "event_type": "FILE_UPLOAD",
+                "details": "Student uploaded file: stud2_8_1768157200185_activity10_eng.pdf",
+                "log_timestamp": "2026-01-12 02:46:40"
+            }
+        ],
+        "proof": 35089,
+        "previous_hash": "8bec8a20ef3f8fa2a264c519fb347f1029d54ad4b91b04936eec0f0fbaced425"
+    },
+    {
+        "index": 4,
+        "timestamp": 1768157358.3559322,
+        "logs": [
+            {
+                "sender": "stud1",
+                "recipient": 8,
+                "event_type": "FILE_UPLOAD",
+                "details": "Student uploaded file: stud1_8_1768157358214_Activity2_Eng.pdf",
+                "log_timestamp": "2026-01-12 02:49:18"
+            }
+        ],
+        "proof": 119678,
+        "previous_hash": "81b555a7407f20b4ad4276925054b61b2d857b0805a045887805d464f78cffe6"
+    },
+    {
+        "index": 5,
+        "timestamp": 1768186090.6479619,
+        "logs": [
+            {
+                "sender": "stud1",
+                "recipient": 8,
+                "event_type": "FILE_UPLOAD",
+                "details": "Student uploaded file: stud1_8_1768186090198_activity1_eng.pdf",
+                "log_timestamp": "2026-01-12 10:48:10"
+            }
+        ],
+        "proof": 146502,
+        "previous_hash": "0eb794c99facd8a6e08135a80fc36b5485b78ad1e22f846c423a605ccf145869"
+    },
+    {
+        "index": 6,
+        "timestamp": 1776706923.3201473,
+        "logs": [
+            {
+                "sender": "stud1",
+                "recipient": 8,
+                "event_type": "FILE_DELETE",
+                "details": "Deleted file: stud1_8_1768186090198_activity1_eng.pdf",
+                "log_timestamp": "2026-04-21 01:42:03"
+            }
+        ],
+        "proof": 43538,
+        "previous_hash": "290138b351a9caed19bac371b8a37583a6c31533926c664e49e7179bf548dbff"
+    },
+    {
+        "index": 7,
+        "timestamp": 1777108803.6185288,
+        "logs": [
+            {
+                "sender": "stud1",
+                "recipient": 8,
+                "event_type": "FILE_DELETE",
+                "details": "Deleted file: stud1_8_1768157358214_Activity2_Eng.pdf",
+                "log_timestamp": "2026-04-25 17:20:03"
+            }
+        ],
+        "proof": 85724,
+        "previous_hash": "31363e770467c6f0bf4e750c75c93376f9151e0ea8ce881bb15ea8ea7cf8fb66"
+    },
+    {
+        "index": 8,
+        "timestamp": 1779396508.247579,
+        "logs": [
+            {
+                "sender": "lect1",
+                "recipient": 8,
+                "event_type": "ACTIVITY_DELETED",
+                "details": "Activity ID 8 and all related submissions removed.",
+                "log_timestamp": "2026-05-22 04:48:28"
+            }
+        ],
+        "proof": 51178,
+        "previous_hash": "9a3dd7488ac1e36202c2a53b3178d885141e291f939fb8e53740783d2b57e1cb"
+    }
+]

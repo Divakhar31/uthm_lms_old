@@ -1,0 +1,304 @@
+[
+    {
+        "index": 1,
+        "timestamp": 1776706224.441608,
+        "logs": [],
+        "proof": 100,
+        "previous_hash": "1"
+    },
+    {
+        "index": 2,
+        "timestamp": 1776706224.4827478,
+        "logs": [
+            {
+                "sender": "lect1",
+                "recipient": 11,
+                "event_type": "ACTIVITY_CREATED",
+                "details": "Title: Project 2, Type: individual, File: None",
+                "log_timestamp": "2026-04-21 01:30:24"
+            }
+        ],
+        "proof": 35293,
+        "previous_hash": "4bd41d5f369f80ee11b2696b0cf5bd4d6bf00c685b2a90ae112d3656dabd78d1"
+    },
+    {
+        "index": 3,
+        "timestamp": 1776707344.6315682,
+        "logs": [
+            {
+                "sender": "stud1",
+                "recipient": 11,
+                "event_type": "FILE_UPLOAD",
+                "details": "Student uploaded file: stud1_11_1776707344213_psm_chap1final.pdf",
+                "log_timestamp": "2026-04-21 01:49:04"
+            }
+        ],
+        "proof": 35089,
+        "previous_hash": "36838111fac826aa9ddd195c02b53849ae343424e8c3447d19979e5db59899d7"
+    },
+    {
+        "index": 4,
+        "timestamp": 1776707397.1175096,
+        "logs": [
+            {
+                "sender": "stud2",
+                "recipient": 11,
+                "event_type": "FILE_UPLOAD",
+                "details": "Student uploaded file: stud2_11_1776707396506_chap2_psmfinal.pdf",
+                "log_timestamp": "2026-04-21 01:49:56"
+            }
+        ],
+        "proof": 119678,
+        "previous_hash": "430c0d768374210467182188a86c48a869a11a3d675e5c2dafb12d59f36b7fea"
+    },
+    {
+        "index": 5,
+        "timestamp": 1776707466.4329984,
+        "logs": [
+            {
+                "sender": "stud3",
+                "recipient": 11,
+                "event_type": "FILE_UPLOAD",
+                "details": "Student uploaded file: stud3_11_1776707465963_chap3_psm_after_correct2.pdf",
+                "log_timestamp": "2026-04-21 01:51:06"
+            }
+        ],
+        "proof": 146502,
+        "previous_hash": "6501e133a9759329b43bfd80e9e47908b416d23213e166714c7b2fdc0f7fdf6e"
+    },
+    {
+        "index": 6,
+        "timestamp": 1778963309.8284705,
+        "logs": [
+            {
+                "sender": "SYSTEM_AUTO_CHECKER",
+                "recipient": 11,
+                "event_type": "MATRIX_CHECK_COMPLETE",
+                "details": "Automated Matrix Comparison successfully completed for 3 student submissions.",
+                "log_timestamp": "2026-05-17 04:28:29"
+            }
+        ],
+        "proof": 43538,
+        "previous_hash": "ca109448ae5975ddcb9b2498f0c924a725cb8b447d7e4b7edfec3621be503b2b"
+    },
+    {
+        "index": 7,
+        "timestamp": 1778965900.4433181,
+        "logs": [
+            {
+                "sender": "SYSTEM_AUTO_CHECKER",
+                "recipient": 11,
+                "event_type": "MATRIX_CHECK_COMPLETE",
+                "details": "Automated Matrix Comparison successfully completed for 3 student submissions.",
+                "log_timestamp": "2026-05-17 05:11:40"
+            }
+        ],
+        "proof": 85724,
+        "previous_hash": "2de7e7141f5b526e57d8faf5bfa6d21d2d41e4a3fc5dafee99ec65a5ba055337"
+    },
+    {
+        "index": 8,
+        "timestamp": 1778972827.0475879,
+        "logs": [
+            {
+                "sender": "SYSTEM_AUTO_CHECKER",
+                "recipient": 11,
+                "event_type": "SCORE_LOCKED",
+                "details": "Sub_ID:21 | Score:8.2",
+                "log_timestamp": "2026-05-17 07:07:06"
+            },
+            {
+                "sender": "SYSTEM_AUTO_CHECKER",
+                "recipient": 11,
+                "event_type": "SCORE_LOCKED",
+                "details": "Sub_ID:22 | Score:8.2",
+                "log_timestamp": "2026-05-17 07:07:06"
+            },
+            {
+                "sender": "SYSTEM_AUTO_CHECKER",
+                "recipient": 11,
+                "event_type": "SCORE_LOCKED",
+                "details": "Sub_ID:23 | Score:4.2",
+                "log_timestamp": "2026-05-17 07:07:06"
+            }
+        ],
+        "proof": 51178,
+        "previous_hash": "398bab28cf5ee0eeb88f196fad116cf891d60e8b9487ed122a05c7523319aa70"
+    },
+    {
+        "index": 9,
+        "timestamp": 1778973041.7998579,
+        "logs": [
+            {
+                "sender": "SYSTEM_AUTO_CHECKER",
+                "recipient": 11,
+                "event_type": "SCORE_LOCKED",
+                "details": "Sub_ID:21 | Score:8.2",
+                "log_timestamp": "2026-05-17 07:10:41"
+            },
+            {
+                "sender": "SYSTEM_AUTO_CHECKER",
+                "recipient": 11,
+                "event_type": "SCORE_LOCKED",
+                "details": "Sub_ID:22 | Score:8.2",
+                "log_timestamp": "2026-05-17 07:10:41"
+            },
+            {
+                "sender": "SYSTEM_AUTO_CHECKER",
+                "recipient": 11,
+                "event_type": "SCORE_LOCKED",
+                "details": "Sub_ID:23 | Score:4.2",
+                "log_timestamp": "2026-05-17 07:10:41"
+            }
+        ],
+        "proof": 71730,
+        "previous_hash": "3ded12b2750d1a23a26a6fee7f3552c9ef33fe5f5861fe697c32ef93cdeb2ac7"
+    },
+    {
+        "index": 10,
+        "timestamp": 1779158442.800184,
+        "logs": [
+            {
+                "sender": "SYSTEM_AUTO_CHECKER",
+                "recipient": 11,
+                "event_type": "SCORE_LOCKED",
+                "details": "Sub_ID:21 | Score:8.2",
+                "log_timestamp": "2026-05-19 10:40:42"
+            },
+            {
+                "sender": "SYSTEM_AUTO_CHECKER",
+                "recipient": 11,
+                "event_type": "SCORE_LOCKED",
+                "details": "Sub_ID:22 | Score:8.2",
+                "log_timestamp": "2026-05-19 10:40:42"
+            },
+            {
+                "sender": "SYSTEM_AUTO_CHECKER",
+                "recipient": 11,
+                "event_type": "SCORE_LOCKED",
+                "details": "Sub_ID:23 | Score:4.2",
+                "log_timestamp": "2026-05-19 10:40:42"
+            }
+        ],
+        "proof": 55589,
+        "previous_hash": "cce6c559d2d1677e2c24d3eecc2d188a9d10acf4bcac89e9ed7fcad7bb8660e9"
+    },
+    {
+        "index": 11,
+        "timestamp": 1779396378.0718145,
+        "logs": [
+            {
+                "sender": "SYSTEM_AUTO_CHECKER",
+                "recipient": 11,
+                "event_type": "SCORE_LOCKED",
+                "details": "Sub_ID:21 | Score:8.2",
+                "log_timestamp": "2026-05-22 04:46:18"
+            },
+            {
+                "sender": "SYSTEM_AUTO_CHECKER",
+                "recipient": 11,
+                "event_type": "SCORE_LOCKED",
+                "details": "Sub_ID:22 | Score:8.2",
+                "log_timestamp": "2026-05-22 04:46:18"
+            },
+            {
+                "sender": "SYSTEM_AUTO_CHECKER",
+                "recipient": 11,
+                "event_type": "SCORE_LOCKED",
+                "details": "Sub_ID:23 | Score:4.2",
+                "log_timestamp": "2026-05-22 04:46:18"
+            }
+        ],
+        "proof": 35704,
+        "previous_hash": "1443a368121e1ece3629400c0673cd1c92c003a92fc0b4b2702117a524a771a1"
+    },
+    {
+        "index": 12,
+        "timestamp": 1779396453.202824,
+        "logs": [
+            {
+                "sender": "lect1",
+                "recipient": 11,
+                "event_type": "REPORT_PUBLISHED",
+                "details": "Lecturer published Originality Report for Submission #21. Final Score: 8.2%.",
+                "log_timestamp": "2026-05-22 04:47:33"
+            }
+        ],
+        "proof": 57342,
+        "previous_hash": "7fb8e622bdd157cd7c46b4db3de21dbc5e37e60c3a507578893c76ce13aa82c0"
+    },
+    {
+        "index": 13,
+        "timestamp": 1779411135.0718684,
+        "logs": [
+            {
+                "sender": "SYSTEM_AUTO_CHECKER",
+                "recipient": 11,
+                "event_type": "SCORE_LOCKED",
+                "details": "Sub_ID:21 | Score:8.2",
+                "log_timestamp": "2026-05-22 08:52:14"
+            },
+            {
+                "sender": "SYSTEM_AUTO_CHECKER",
+                "recipient": 11,
+                "event_type": "SCORE_LOCKED",
+                "details": "Sub_ID:22 | Score:8.2",
+                "log_timestamp": "2026-05-22 08:52:14"
+            },
+            {
+                "sender": "SYSTEM_AUTO_CHECKER",
+                "recipient": 11,
+                "event_type": "SCORE_LOCKED",
+                "details": "Sub_ID:23 | Score:4.2",
+                "log_timestamp": "2026-05-22 08:52:14"
+            }
+        ],
+        "proof": 68975,
+        "previous_hash": "ac00da59000eb5156e5e484bf1730eab25a4d5615acc38ff3892693c2e681712"
+    },
+    {
+        "index": 14,
+        "timestamp": 1779494370.9902725,
+        "logs": [
+            {
+                "sender": "lect1",
+                "recipient": 11,
+                "event_type": "ACTIVITY_EDITED",
+                "details": "Title: Project 2 | DueDate: 2026-04-22T22:30",
+                "log_timestamp": "2026-05-23 07:59:30"
+            }
+        ],
+        "proof": 153122,
+        "previous_hash": "569f7c4768d0e227353502db4dafbf74a6a8ca43a3edccda3c5b2c9a32b98576"
+    },
+    {
+        "index": 15,
+        "timestamp": 1779504166.517457,
+        "logs": [
+            {
+                "sender": "lect1",
+                "recipient": 11,
+                "event_type": "REPORT_PUBLISHED",
+                "details": "Lecturer published Originality Report for Submission #22. Final Score: 8.2%.",
+                "log_timestamp": "2026-05-23 10:42:46"
+            }
+        ],
+        "proof": 20760,
+        "previous_hash": "8076c572ebe46b8d518ffefb90a0194f266dc5a782556a58d9202a74eba1464c"
+    },
+    {
+        "index": 16,
+        "timestamp": 1779504381.6047602,
+        "logs": [
+            {
+                "sender": "lect1",
+                "recipient": 11,
+                "event_type": "REPORT_PUBLISHED",
+                "details": "Lecturer published Originality Report for Submission #21. Final Score: 8.2%.",
+                "log_timestamp": "2026-05-23 10:46:21"
+            }
+        ],
+        "proof": 29341,
+        "previous_hash": "af2f049c0b3b5351fac0e6e312358971fd2b51ef3815d0e5ccd1739f159d77fe"
+    }
+]

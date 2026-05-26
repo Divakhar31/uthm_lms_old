@@ -1,0 +1,84 @@
+[
+    {
+        "index": 1,
+        "timestamp": 1778928927.0316236,
+        "logs": [],
+        "proof": 100,
+        "previous_hash": "1"
+    },
+    {
+        "index": 2,
+        "timestamp": 1778928927.1373966,
+        "logs": [
+            {
+                "sender": "lect1",
+                "recipient": 16,
+                "event_type": "ACTIVITY_CREATED",
+                "details": "Title: Assignment 6, Type: individual, File: None",
+                "log_timestamp": "2026-05-16 18:55:27"
+            }
+        ],
+        "proof": 35293,
+        "previous_hash": "e691160a90fbeedb1609fc17a2015bc1e869aa58e3bac5302dc09af250a86e4b"
+    },
+    {
+        "index": 3,
+        "timestamp": 1778950306.785459,
+        "logs": [
+            {
+                "sender": "stud1",
+                "recipient": 16,
+                "event_type": "FILE_UPLOAD",
+                "details": "Student uploaded file: stud1_16_1778950306631_Divakhar_Certificates.pdf",
+                "log_timestamp": "2026-05-17 00:51:46"
+            }
+        ],
+        "proof": 35089,
+        "previous_hash": "67d92626aab55e18478242a214b5ef489e4d97c5420a088ab6ee2c7313258dbf"
+    },
+    {
+        "index": 4,
+        "timestamp": 1778950328.517953,
+        "logs": [
+            {
+                "sender": "stud1",
+                "recipient": 16,
+                "event_type": "FILE_UPLOAD",
+                "details": "Student uploaded file: stud1_16_1778950328058_Divakhar_Certificates.pdf",
+                "log_timestamp": "2026-05-17 00:52:08"
+            }
+        ],
+        "proof": 119678,
+        "previous_hash": "5ec8bc52ddc5db5e1383bb4e46eeb1decffe490ef813f9588ac8d0ffc1f917bd"
+    },
+    {
+        "index": 5,
+        "timestamp": 1778956157.8599443,
+        "logs": [
+            {
+                "sender": "stud1",
+                "recipient": 16,
+                "event_type": "FILE_DELETE",
+                "details": "Deleted file: stud1_16_1778950306631_Divakhar_Certificates.pdf",
+                "log_timestamp": "2026-05-17 02:29:17"
+            }
+        ],
+        "proof": 146502,
+        "previous_hash": "2a183dc63912bae88c913e059982515f43630661377669434de0c85004829d7f"
+    },
+    {
+        "index": 6,
+        "timestamp": 1779494104.1303432,
+        "logs": [
+            {
+                "sender": "lect1",
+                "recipient": 16,
+                "event_type": "ACTIVITY_DELETED",
+                "details": "Activity ID 16 and all related submissions removed.",
+                "log_timestamp": "2026-05-23 07:55:03"
+            }
+        ],
+        "proof": 43538,
+        "previous_hash": "e646834cfa0481df38de95f044bfe62444bab92c7702c1ee19528852cb2bd5bd"
+    }
+]

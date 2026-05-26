@@ -1,0 +1,69 @@
+[
+    {
+        "index": 1,
+        "timestamp": 1778928891.2251942,
+        "logs": [],
+        "proof": 100,
+        "previous_hash": "1"
+    },
+    {
+        "index": 2,
+        "timestamp": 1778928891.3266654,
+        "logs": [
+            {
+                "sender": "lect1",
+                "recipient": 15,
+                "event_type": "ACTIVITY_CREATED",
+                "details": "Title: lab 1, Type: individual, File: None",
+                "log_timestamp": "2026-05-16 18:54:51"
+            }
+        ],
+        "proof": 35293,
+        "previous_hash": "f7691edf65ea4b77ba230c3b135046eb8dc85c56e20a04e5f3f0425e216f6189"
+    },
+    {
+        "index": 3,
+        "timestamp": 1779154759.3783388,
+        "logs": [
+            {
+                "sender": "stud1",
+                "recipient": 15,
+                "event_type": "FILE_UPLOAD",
+                "details": "Student uploaded file: stud1_15_1779154759050_appendixd_corporate.pdf",
+                "log_timestamp": "2026-05-19 09:39:19"
+            }
+        ],
+        "proof": 35089,
+        "previous_hash": "bf352f9f27218805f820c4abbc34dc06edcb374016923dd67eda414480634ba2"
+    },
+    {
+        "index": 4,
+        "timestamp": 1779412081.5340028,
+        "logs": [
+            {
+                "sender": "lect1",
+                "recipient": 15,
+                "event_type": "ACTIVITY_EDITED",
+                "details": "Title: lab 1",
+                "log_timestamp": "2026-05-22 09:08:01"
+            }
+        ],
+        "proof": 119678,
+        "previous_hash": "faea50f2318bdf65863c9d2225212b0b462d06151bfce651815dc8e2640e065e"
+    },
+    {
+        "index": 5,
+        "timestamp": 1779412089.2706006,
+        "logs": [
+            {
+                "sender": "lect1",
+                "recipient": 15,
+                "event_type": "ACTIVITY_EDITED",
+                "details": "Title: lab 2",
+                "log_timestamp": "2026-05-22 09:08:08"
+            }
+        ],
+        "proof": 146502,
+        "previous_hash": "fb21d54ca5a7e5388241866d270f5267a28f96275f2775aef1f2b2d7333aaa90"
+    }
+]

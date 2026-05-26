@@ -1,0 +1,39 @@
+[
+    {
+        "index": 1,
+        "timestamp": 1768185779.831279,
+        "logs": [],
+        "proof": 100,
+        "previous_hash": "1"
+    },
+    {
+        "index": 2,
+        "timestamp": 1768185779.943603,
+        "logs": [
+            {
+                "sender": "lect1",
+                "recipient": 9,
+                "event_type": "ACTIVITY_CREATED",
+                "details": "Title: Assignment 5, Type: individual, File: task_5_1768185779.pdf",
+                "log_timestamp": "2026-01-12 10:42:59"
+            }
+        ],
+        "proof": 35293,
+        "previous_hash": "02d181dd07d2fca09e0decd42e704a1afafb6a6dd19189666317dc19ad05fea2"
+    },
+    {
+        "index": 3,
+        "timestamp": 1776624917.7276988,
+        "logs": [
+            {
+                "sender": "lect1",
+                "recipient": 9,
+                "event_type": "ACTIVITY_DELETED",
+                "details": "Activity ID 9 and all related submissions removed.",
+                "log_timestamp": "2026-04-20 02:55:17"
+            }
+        ],
+        "proof": 35089,
+        "previous_hash": "802947aebc8df22e30cbbbdc2027c270323fa4ec867d031a37b35ea1e5d3ff61"
+    }
+]
