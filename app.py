@@ -1963,8 +1963,8 @@ def download_plagiarism_report(target_id):
         if platform.system() == 'Windows':
             path_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
         else:
-            # Use the local Linux folder we built using the render-build.sh script!
-            path_wkhtmltopdf = os.path.join(os.getcwd(), 'wkhtmltopdf_folder', 'usr', 'local', 'bin', 'wkhtmltopdf')
+            # Point to the newly extracted generic static binary!
+            path_wkhtmltopdf = os.path.join(os.getcwd(), 'wkhtmltox', 'bin', 'wkhtmltopdf')
             
         config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
 
@@ -2275,8 +2275,8 @@ def student_download_report(submission_id):
         if platform.system() == 'Windows':
             path_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
         else:
-            # Use the local Linux folder we built using the render-build.sh script!
-            path_wkhtmltopdf = os.path.join(os.getcwd(), 'wkhtmltopdf_folder', 'usr', 'local', 'bin', 'wkhtmltopdf')
+            # Point to the newly extracted generic static binary!
+            path_wkhtmltopdf = os.path.join(os.getcwd(), 'wkhtmltox', 'bin', 'wkhtmltopdf')
             
         config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
 
