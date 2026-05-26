@@ -1952,6 +1952,7 @@ def download_plagiarism_report(target_id):
         full_html = "".join(full_html_parts).replace('\n', '<br>')
 
         # 5. Render to a special PDF HTML template
+       # Render PDF Template
         rendered_html = render_template('pdf_report_template.html', 
                                         target_name=target['fullname'],
                                         overall_score=round(overall_max_score, 1), 
@@ -1959,8 +1960,6 @@ def download_plagiarism_report(target_id):
                                         content=full_html,
                                         now=datetime.now().strftime("%B %d, %Y"))
 
-        # 6. Convert to PDF and trigger download
-        # Automatically detect if we are on Windows (Local) or Linux (Render)
         if platform.system() == 'Windows':
             path_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
         else:
@@ -2273,8 +2272,7 @@ def student_download_report(submission_id):
                                         content=full_html,
                                         now=datetime.now().strftime("%B %d, %Y"))
 
-
-       if platform.system() == 'Windows':
+        if platform.system() == 'Windows':
             path_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
         else:
             # Use the local Linux folder we built using the render-build.sh script!
