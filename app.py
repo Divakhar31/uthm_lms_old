@@ -27,6 +27,7 @@ import pyotp
 import urllib.parse 
 import threading
 import uuid
+from flask_bcrypt import Bcrypt
 
 def is_strong_password(password):
     """Checks if a password meets strict security criteria."""
@@ -88,6 +89,7 @@ def calculate_unified_similarity(text1, text2):
     return min(final_score, 100.0), significant_matches
 
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 app.secret_key = "uthm_secret_2025"
 s = URLSafeTimedSerializer(app.secret_key)
 
