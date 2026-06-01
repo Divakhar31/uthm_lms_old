@@ -8,3 +8,4 @@ pdfkit
 pyotp
 scikit-learn
 gunicorn
+Flask-Bcrypt
