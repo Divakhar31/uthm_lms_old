@@ -4,7 +4,7 @@ import smtplib, ssl, random
 import os
 import datetime
 from werkzeug.utils import secure_filename
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash as werkzeug_check
 from werkzeug.security import generate_password_hash
 from datetime import datetime
 from local_blockchain import Blockchain
@@ -345,7 +345,7 @@ def register():
                 return redirect('/register')
 
             # 4. Hash the password securely and save to database
-            hashed_pw = generate_password_hash(password)
+            hashed_pw = bcrypt.generate_password_hash(password).decode('utf-8')
 
             cursor.execute("""
                 INSERT INTO users (username, password, email, role, fullname, matric_no) 
@@ -390,7 +390,6 @@ def change_password():
             return redirect('/change-password')
 
         # 🚨 NEW: Strong Password Validation
-        # Rules: Minimum 8 chars, 1 Uppercase, 1 Lowercase, 1 Number
         if len(new_password) < 8:
             flash('Password must be at least 8 characters long.', 'danger')
             return redirect('/change-password')
@@ -411,14 +410,30 @@ def change_password():
             # 2. Fetch the user's current password
             cursor.execute("SELECT password FROM users WHERE username = %s", (session.get('username'),))
             user = cursor.fetchone()
+            
+            if not user:
+                flash('User not found.', 'danger')
+                return redirect('/change-password')
 
-            # 3. Verify current password
-            if not user or not check_password_hash(user['password'], current_password):
+            stored_hash = user['password']
+            is_authenticated = False
+
+            # 3. Verify current password (Handle both old scrypt and new bcrypt)
+            if stored_hash.startswith('scrypt:'):
+                if werkzeug_check(stored_hash, current_password):
+                    is_authenticated = True
+            else:
+                if bcrypt.check_password_hash(stored_hash, current_password):
+                    is_authenticated = True
+
+            # If neither check passed, the current password was wrong
+            if not is_authenticated:
                 flash('Incorrect current password.', 'danger')
                 return redirect('/change-password')
 
-            # 4. Hash the new password and update the database
-            new_hashed_password = generate_password_hash(new_password)
+            # 4. Hash the NEW password strictly using Bcrypt and update the database
+            new_hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+            
             cursor.execute("UPDATE users SET password = %s WHERE username = %s", (new_hashed_password, session.get('username')))
             db_conn.commit()
 
@@ -434,7 +449,6 @@ def change_password():
             db_conn.close()
 
     return render_template('change_password.html')
-
 # ==========================================
 # 1. FORGOT PASSWORD (Enter Username)
 # ==========================================
@@ -569,42 +583,75 @@ def login():
         username = request.form.get('username')
         password_attempt = request.form.get('password')
 
-        db = get_db()
-        cur = db.cursor(dictionary=True)
-        # Fetch the user, including their totp_secret column
-        cur.execute("SELECT * FROM users WHERE username = %s", (username,))
-        user = cur.fetchone()
-        cur.close()
-        db.close()
+        db_conn = None
+        cursor = None
+        try:
+            db_conn = get_db()
+            cursor = db_conn.cursor(dictionary=True)
 
-        # Check if the user exists AND the hashed password is correct
-        if user and check_password_hash(user['password'], password_attempt):
-            
-            # Clear any old session data first
-            session.clear() 
+            # Fetch the user from the database
+            cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+            user = cursor.fetchone()
 
-            # IMPORTANT: We do NOT set session['username'] yet! 
-            # If we did, they could bypass 2FA by just typing a URL.
+            # Check if the user actually exists
+            if user:
+                stored_hash = user['password']
+                is_authenticated = False
 
-            # Check if this user has already set up their Authenticator App
-            if user.get('totp_secret'):
-                # They HAVE set it up. Send them to verify the 6-digit code.
-                session['pending_user'] = user['username']
-                session['pending_role'] = user.get('role')
-                return redirect('/verify_2fa')
+                # 1. Check if this is an OLD user (their hash starts with 'scrypt:')
+                if stored_hash.startswith('scrypt:'):
+                    if werkzeug_check(stored_hash, password_attempt):
+                        # SUCCESS! Upgrade them to Bcrypt behind the scenes
+                        new_bcrypt_hash = bcrypt.generate_password_hash(password_attempt).decode('utf-8')
+                        cursor.execute("UPDATE users SET password = %s WHERE id = %s", (new_bcrypt_hash, user['id']))
+                        db_conn.commit()
+                        is_authenticated = True
+
+                # 2. Check if this is a NEW user (Bcrypt)
+                else:
+                    if bcrypt.check_password_hash(stored_hash, password_attempt):
+                        is_authenticated = True
+
+                # 3. If they passed either check above, proceed to 2FA
+                if is_authenticated:
+                    # Clear any old session data first
+                    session.clear() 
+
+                    # Check if this user has already set up their Authenticator App
+                    if user.get('totp_secret'):
+                        # They HAVE set it up. Send them to verify the 6-digit code.
+                        session['pending_user'] = user['username']
+                        session['pending_role'] = user.get('role')
+                        return redirect('/verify_2fa')
+                    else:
+                        # They HAVE NOT set it up. Force them to scan the QR code first.
+                        session['setup_user'] = user['username']
+                        session['setup_role'] = user.get('role')
+                        return redirect('/setup_2fa')
+                        
+                else:
+                    # User exists, but the password was wrong
+                    flash('Invalid username or password', 'danger')
+                    return redirect('/login')
+
             else:
-                # They HAVE NOT set it up. Force them to scan the QR code first.
-                session['setup_user'] = user['username']
-                session['setup_role'] = user.get('role')
-                return redirect('/setup_2fa')
+                # User does not exist at all
+                flash('Invalid username or password', 'danger')
+                return redirect('/login')
 
-        # If the username doesn't exist or the password is wrong
-        return render_template('login.html', error="Invalid username or password")
+        except Exception as e:
+            if db_conn:
+                db_conn.rollback()
+            print(f"Login Error: {e}")
+            flash('An error occurred during login. Please try again.', 'danger')
+            return redirect('/login')
+            
+        finally:
+            if cursor: cursor.close()
+            if db_conn: db_conn.close()
 
-    # If it's a normal GET request, just show the login page
+    # GET Request: Show the HTML page
     return render_template('login.html')
-
-import urllib.parse # Ensure this is at the top of app.py!
 
 # ==========================================
 # SETUP 2FA (QR Code Generation)
