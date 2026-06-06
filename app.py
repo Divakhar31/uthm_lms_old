@@ -29,6 +29,24 @@ import threading
 import uuid
 from flask_bcrypt import Bcrypt
 
+def compare_dates_safely(blockchain_date_str, db_date_raw):
+    try:
+        bc_dt = datetime.strptime(blockchain_date_str, '%Y-%m-%dT%H:%M')
+        
+        if isinstance(db_date_raw, str):
+            db_dt = datetime.strptime(db_date_raw, '%Y-%m-%d %H:%M:%S')
+        else:
+            db_dt = db_date_raw 
+
+        if bc_dt.replace(second=0, microsecond=0) != db_dt.replace(second=0, microsecond=0):
+            return True # REAL TAMPER DETECTED
+        else:
+            return False # SAFE: Times match exactly
+
+    except Exception as e:
+        print(f"Date parsing error: {e}")
+        return True
+
 def is_strong_password(password):
     """Checks if a password meets strict security criteria."""
     if len(password) < 8: return False
