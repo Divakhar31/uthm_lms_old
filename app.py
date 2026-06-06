@@ -3023,11 +3023,13 @@ def blockchain_audit_activity(activity_id):
 
         # CROSS-CHECK 4: DUE DATE
         if latest_chain_due_date and activity.get('due_date'):
-            sql_date_str = str(activity['due_date'])
-            if sql_date_str != latest_chain_due_date:
+            sql_date_raw = activity['due_date']
+            
+            # Use the new function instead of !=
+            if compare_dates_safely(latest_chain_due_date, sql_date_raw):
                 db_tampered = True
-                tamper_alerts.append(f"Due Date Tampered! Blockchain recorded '{latest_chain_due_date}', but Database shows '{sql_date_str}'!")
-
+                tamper_alerts.append(f"Due Date Tampered! Blockchain recorded '{latest_chain_due_date}', but Database shows '{sql_date_raw}'!")
+                
         return render_template(
             'blockchain_audit.html', 
             chain=activity_chain.chain, 
