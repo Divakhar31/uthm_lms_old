@@ -232,13 +232,12 @@ def check_activity_tampering(activity_id, check_scores=True, check_title=True, c
                 
         # Test D: Due Date (NEW)
         if check_due_date:
-            if latest_chain_due_date and db_activity and db_activity['due_date']:
-                # Convert the SQL datetime object to a string so it can be compared to the blockchain text log
-                sql_date_str = str(db_activity['due_date'])
-                if sql_date_str != latest_chain_due_date:
+            if latest_chain_due_date and db_activity and db_activity.get('due_date'):
+                # Use the new safe function instead of strict string comparison
+                if compare_dates_safely(latest_chain_due_date, db_activity['due_date']):
                     return True
 
-        return False 
+        return False
         
     except Exception as e:
         print(f"Global Tamper Check Error for Activity {activity_id}: {e}")
@@ -304,10 +303,11 @@ def get_tamper_alert_count(activity_id):
         for f in chain_active_files:
             if f not in db_files: error_count += 1
 
-        # Count Due Date errors
+         # Count Due Date errors
         if latest_chain_due_date and activity and activity.get('due_date'):
-            sql_date_str = str(activity['due_date'])
-            if sql_date_str != latest_chain_due_date: error_count += 1
+            # Use the safe function to increment the error count accurately
+            if compare_dates_safely(latest_chain_due_date, activity['due_date']):
+                error_count += 1
 
         cursor.close()
         db_conn.close()
