@@ -1192,7 +1192,7 @@ def acknowledge_tamper(activity_id):
         db_conn.commit()
         
         flash('Tamper alert acknowledged. It has been hidden from the main dashboard.', 'success')
-        return redirect(request.referrer)
+        return redirect(request.referrer or f'/lecturer/blockchain_audit_activity/{activity_id}')
         
     except Exception as e:
         if db_conn: db_conn.rollback()
