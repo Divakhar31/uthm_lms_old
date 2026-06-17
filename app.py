@@ -2295,18 +2295,18 @@ def student_reports(course_id):
         cursor.execute("SELECT course_code, course_name FROM courses WHERE id = %s", (course_id,))
         course_data = cursor.fetchone()
 
-        # 3. The Safest Query: Direct link from shared_reports to submissions
+        # 3. THE FIX: Safely grabbing 'a.title' from the activities table!
         query = """
-            SELECT sr.*, s.activity_id, s.file_name 
+            SELECT sr.*, s.activity_id, a.title, s.file_name 
             FROM shared_reports sr
             JOIN submissions s ON sr.submission_id = s.submission_id
+            LEFT JOIN activities a ON s.activity_id = a.id
             WHERE s.student_username = %s AND s.course_id = %s
             ORDER BY sr.shared_on DESC
         """
         cursor.execute(query, (student_username, course_id))
         fetched_reports = cursor.fetchall()
 
-        # 🚨 THE FIX: Pass the data under multiple variables to bypass any HTML typos!
         return render_template('student_reports.html', 
                                reports=fetched_reports, 
                                results=fetched_reports, 
