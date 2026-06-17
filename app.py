@@ -2451,7 +2451,7 @@ def originality_report(target_id):
         sidebar_matches = []
         char_marks = [0] * len(t_text)
 
-            for comp in comparisons:
+        for comp in comparisons:
             source_num = len(sidebar_matches) + 1
             sidebar_matches.append({'source_name': comp['other_sub']['fullname'], 'score': round(comp['score'], 1), 'sub_id': comp['other_sub']['submission_id']})
             for m in comp['matches']:
