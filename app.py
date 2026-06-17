@@ -2008,28 +2008,53 @@ def download_plagiarism_report(target_id):
                     if i < len(char_marks) and char_marks[i] == 0:
                         char_marks[i] = source_num
 
-        # Build Highlighted HTML
+        # Build Highlighted HTML (THE SMART WRAPPER)
         full_html_parts = []
         if len(t_text) > 0:
             current_source = char_marks[0]
             current_text = t_text[0]
+            
             for i in range(1, len(t_text)):
                 if char_marks[i] != current_source:
                     if current_source != 0:
-                        full_html_parts.append(f'<span class="match-source-{current_source}">{current_text}<sup class="source-tag">[{current_source}]</sup></span>')
+                        # 🚨 Separate actual text from invisible spaces
+                        core_text = current_text.strip(" \t\n\r")
+                        if core_text:
+                            start_idx = current_text.find(core_text)
+                            end_idx = start_idx + len(core_text)
+                            leading_spaces = current_text[:start_idx]
+                            trailing_spaces = current_text[end_idx:]
+                            
+                            # Keep spaces outside the highlight span
+                            full_html_parts.append(f'{leading_spaces}<span class="match-source-{current_source}">{core_text}</span><sup class="source-tag">[{current_source}]</sup>{trailing_spaces}')
+                        else:
+                            full_html_parts.append(current_text)
                     else:
                         full_html_parts.append(current_text)
+                        
                     current_source = char_marks[i]
                     current_text = t_text[i]
                 else:
                     current_text += t_text[i]
-
+                    
+            # Handle the very last chunk of the document
             if current_source != 0:
-                full_html_parts.append(f'<span class="match-source-{current_source}">{current_text}<sup class="source-tag">[{current_source}]</sup></span>')
+                core_text = current_text.strip(" \t\n\r")
+                if core_text:
+                    start_idx = current_text.find(core_text)
+                    end_idx = start_idx + len(core_text)
+                    leading_spaces = current_text[:start_idx]
+                    trailing_spaces = current_text[end_idx:]
+                    full_html_parts.append(f'{leading_spaces}<span class="match-source-{current_source}">{core_text}</span><sup class="source-tag">[{current_source}]</sup>{trailing_spaces}')
+                else:
+                    full_html_parts.append(current_text)
             else:
                 full_html_parts.append(current_text)
 
-        full_html = "".join(full_html_parts).replace('\n', '<br>')
+        # 🚨 Use regex to clean gaps, DO NOT use .replace('\n', '<br>')
+        raw_html = "".join(full_html_parts)
+        cleaned_html = re.sub(r'\n{3,}', '\n\n', raw_html)
+        full_html = cleaned_html
 
         # 5. Render to a special PDF HTML template
        # Render PDF Template
