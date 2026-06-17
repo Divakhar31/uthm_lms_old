@@ -334,20 +334,20 @@
                            onclick="document.getElementById('loader').style.display='flex';" 
                            style="text-decoration: none;">
 
-                            <span class="percentage-badge 
-                                {% if result.overall_score > 0.60 %}high-risk
-                                {% elif result.overall_score > 0.25 %}med-risk
-                                {% else %}low-risk{% endif %}">
+<span class="percentage-badge 
+    {% if result.overall_score > 60 %}high-risk
+    {% elif result.overall_score > 25 %}med-risk
+    {% else %}low-risk{% endif %}">
     
-                                {% if result.overall_score > 0.60 %}
-                                    ⚠️ High Similarity ({{ (result.overall_score * 100) | round(1) }}%)
-                                {% elif result.overall_score > 0.25 %}
-                                    ⚠️ Moderate Similarity ({{ (result.overall_score * 100) | round(1) }}%)
-                                {% else %}
-                                    ✅ Low Similarity ({{ (result.overall_score * 100) | round(1) }}%)
-                                {% endif %}
-                                &nbsp; | View Proof
-                            </span>
+    {% if result.overall_score > 60 %}
+        ⚠️ High Similarity ({{ [result.overall_score, 100]|min | round(1) }}%)
+    {% elif result.overall_score > 25 %}
+        ⚠️ Moderate Similarity ({{ [result.overall_score, 100]|min | round(1) }}%)
+    {% else %}
+        ✅ Low Similarity ({{ [result.overall_score, 100]|min | round(1) }}%)
+    {% endif %}
+    &nbsp; | View Proof
+</span>
                             
                         </a>
                     </div>
