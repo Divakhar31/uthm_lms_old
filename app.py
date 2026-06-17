@@ -2448,9 +2448,8 @@ def student_delete_report(submission_id):
         db_conn = get_db()
         cursor = db_conn.cursor()
 
-        # Delete the specific plagiarism report tied to this submission
-        # (Using the same table name 'plagiarism_reports' we verified earlier)
-        cursor.execute("DELETE FROM plagiarism_reports WHERE target_submission_id = %s", (submission_id,))
+        # THE FIX: Point to the correct table (shared_reports) and column (submission_id)
+        cursor.execute("DELETE FROM shared_reports WHERE submission_id = %s", (submission_id,))
         db_conn.commit()
 
         flash('Report successfully removed from your dashboard.', 'success')
