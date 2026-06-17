@@ -2457,35 +2457,58 @@ def originality_report(target_id):
             for m in comp['matches']:
                 for i in range(m.a, m.a + m.size):
                     if i < len(char_marks) and char_marks[i] == 0: 
-                        # 🚨 THE FIX: Do not apply the highlight background to newlines!
-                        if t_text[i] not in ['\n', '\r']:
-                            char_marks[i] = source_num
+                        char_marks[i] = source_num
 
         full_html_parts = []
         if len(t_text) > 0:
             current_source = char_marks[0]
             current_text = t_text[0]
+            
             for i in range(1, len(t_text)):
                 if char_marks[i] != current_source:
-                    if current_source != 0: full_html_parts.append(f'<span class="match-source-{current_source}">{current_text}<sup class="source-tag">{current_source}</sup></span>')
-                    else: full_html_parts.append(current_text)
+                    if current_source != 0:
+                        # 🚨 THE SMART WRAPPER 🚨
+                        # This cleanly separates actual words from invisible spaces/newlines
+                        core_text = current_text.strip(" \t\n\r")
+                        
+                        if core_text:
+                            # Figure out exactly where the spaces are
+                            start_idx = current_text.find(core_text)
+                            end_idx = start_idx + len(core_text)
+                            
+                            leading_spaces = current_text[:start_idx]
+                            trailing_spaces = current_text[end_idx:]
+                            
+                            # Build the HTML with spaces securely OUTSIDE the highlight span!
+                            full_html_parts.append(f'{leading_spaces}<span class="match-source-{current_source}">{core_text}</span><sup class="source-tag">{current_source}</sup>{trailing_spaces}')
+                        else:
+                            # It was purely blank space, do not highlight it at all
+                            full_html_parts.append(current_text)
+                    else:
+                        full_html_parts.append(current_text)
+                        
                     current_source = char_marks[i]
                     current_text = t_text[i]
-                else: current_text += t_text[i]
-            if current_source != 0: full_html_parts.append(f'<span class="match-source-{current_source}">{current_text}<sup class="source-tag">{current_source}</sup></span>')
-            else: full_html_parts.append(current_text)
+                else:
+                    current_text += t_text[i]
+                    
+            # Handle the very last chunk of the document
+            if current_source != 0:
+                core_text = current_text.strip(" \t\n\r")
+                if core_text:
+                    start_idx = current_text.find(core_text)
+                    end_idx = start_idx + len(core_text)
+                    leading_spaces = current_text[:start_idx]
+                    trailing_spaces = current_text[end_idx:]
+                    full_html_parts.append(f'{leading_spaces}<span class="match-source-{current_source}">{core_text}</span><sup class="source-tag">{current_source}</sup>{trailing_spaces}')
+                else:
+                    full_html_parts.append(current_text)
+            else:
+                full_html_parts.append(current_text)
 
-        # ==========================================
-        # 🚨 THE TEXT CLEANING FIX (STEP A)
-        # ==========================================
+        # 🚨 Make sure to use the cleaned up HTML!
         raw_html = "".join(full_html_parts)
-        
-        # 1. Shrink massive gaps (3 or more newlines) down to just 2 newlines
         cleaned_html = re.sub(r'\n{3,}', '\n\n', raw_html)
-        
-        # 2. We DO NOT use .replace('\n', '<br>') anymore! 
-        # HTML <br> tags ruin original indents. We keep the raw '\n' characters 
-        # and let the CSS on the frontend handle the formatting perfectly.
         full_html = cleaned_html
 
         # ---> CRITICAL FIX: Pass the activity_id to the HTML template! <---
