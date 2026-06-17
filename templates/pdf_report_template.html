@@ -6,10 +6,13 @@
     <style>
         body { font-family: Arial, sans-serif; color: #333; line-height: 1.6; }
         .header { border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
-        .header h1 { color: #f57c00; margin: 0 0 10px 0; }
-        .summary-box { background-color: #f9f9f9; padding: 15px; border-left: 5px solid #d32f2f; margin-bottom: 30px; }
+        /* Removed the hardcoded orange color here */
+        .header h1 { margin: 0 0 10px 0; }
         
-        /* Highlight Colors for the PDF */
+        /* Removed the hardcoded red border here, we will set it inline */
+        .summary-box { background-color: #f9f9f9; padding: 15px; border-left: 5px solid; margin-bottom: 30px; }
+        
+        /* Highlight Colors for the PDF content */
         .match-source-1 { background-color: #ffcdd2; padding: 2px 0; }
         .match-source-2 { background-color: #bbdefb; padding: 2px 0; }
         .match-source-3 { background-color: #c8e6c9; padding: 2px 0; }
@@ -18,36 +21,57 @@
         
         .source-list { list-style-type: none; padding: 0; }
         .source-list li { margin-bottom: 8px; }
-        .source-number { display: inline-block; background: #d32f2f; color: white; width: 20px; text-align: center; border-radius: 3px; margin-right: 10px; font-weight: bold; }
+        
+        /* Removed the hardcoded red background here, we will set it inline */
+        .source-number { display: inline-block; color: white; width: 20px; text-align: center; border-radius: 3px; margin-right: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
 
+    {% set score_num = overall_score | float %}
+    {% if score_num <= 15 %}
+        {% set main_color = '#28a745' %} {% elif score_num <= 40 %}
+        {% set main_color = '#fd7e14' %} {% else %}
+        {% set main_color = '#dc3545' %} {% endif %}
+
     <div class="header">
-        <h1>{{ target_name }}</h1>
+        <h1 style="color: black; font-weight: bold;">{{ target_name }}</h1>
         <p style="color: #666; margin: 0;">Originality Report - Processed on {{ now }}</p>
     </div>
 
-    <div class="summary-box">
-        <h2 style="margin-top: 0; color: #d32f2f;">Similarity Index: {{ overall_score }}%</h2>
-        <h3>Primary Sources Detected:</h3>
+    <div class="summary-box" style="border-left-color: {{ main_color }};">
+        
+        <h2 style="margin-top: 0; color: {{ main_color }};">Similarity Index: {{ overall_score }}%</h2>
+        
+        <h3 style="color: black;">Primary Sources Detected:</h3>
         <ul class="source-list">
             {% for match in matches %}
+                
+                {% set match_num = match.score | float %}
+                {% if match_num <= 15 %}
+                    {% set badge_color = '#28a745' %}
+                {% elif match_num <= 40 %}
+                    {% set badge_color = '#fd7e14' %}
+                {% else %}
+                    {% set badge_color = '#dc3545' %}
+                {% endif %}
+
                 <li>
-                    <span class="source-number">{{ loop.index }}</span> 
-                    <strong>{{ match.source_name }}</strong> ({{ match.score }}% match)
+                    <span class="source-number" style="background-color: {{ badge_color }};">{{ loop.index }}</span> 
+                    <strong style="color: black;">{{ match.source_name }}</strong> <span style="color: #555;">({{ match.score }}% match)</span>
                 </li>
             {% endfor %}
+            
             {% if not matches %}
                 <li>No significant internal matches found.</li>
             {% endif %}
         </ul>
     </div>
 
-    <h3>Document Content</h3>
-    <hr>
+    <h3 style="color: black;">Document Content</h3>
+    <hr style="border: 0; border-top: 1px solid #ddd;">
     
-    <div style="margin-top: 20px; text-align: justify;">
+    <div style="margin-top: 20px; text-align: justify; white-space: pre-wrap; font-family: 'Times New Roman', serif; line-height: 1.5;">
         {{ content|safe }}
     </div>
 
