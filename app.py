@@ -2295,14 +2295,14 @@ def student_reports(course_id):
         cursor.execute("SELECT course_code, course_name FROM courses WHERE id = %s", (course_id,))
         course_data = cursor.fetchone()
 
-        # 3. THE BULLETPROOF FIX: Mapping directly to s.course_id based on your ERD
+        # 3. THE REAL FIX: Reverting to your original, correct routing through 'activities'!
         query = """
             SELECT sr.*, s.activity_id, a.title, c.course_code, c.course_name 
             FROM shared_reports sr
             JOIN submissions s ON sr.submission_id = s.submission_id
-            LEFT JOIN activities a ON s.activity_id = a.id
-            LEFT JOIN courses c ON s.course_id = c.id
-            WHERE s.student_username = %s AND s.course_id = %s
+            JOIN activities a ON s.activity_id = a.id
+            JOIN courses c ON a.course_id = c.id
+            WHERE s.student_username = %s AND c.id = %s
             ORDER BY sr.shared_on DESC
         """
         cursor.execute(query, (student_username, course_id))
