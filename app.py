@@ -239,38 +239,37 @@ def check_activity_tampering(activity_id, check_scores=True, check_title=True, c
                         if filename_to_remove in chain_active_files:
                             chain_active_files.remove(filename_to_remove)
 
-        # 4. CROSS-CHECK DATA 
+# 4. CROSS-CHECK DATA (With FYP Debuggers!)
         
         # Test A: Scores
         if check_scores:
-            if student_username:
-                # Local Scan: Only compare scores for this specific student's submissions
-                for sub_id, db_score in db_scores.items():
-                    chain_score = latest_chain_scores.get(sub_id)
-                    if chain_score is not None and abs(chain_score - float(db_score)) > 0.01:
-                        return True 
-            else:
-                # Global Scan: Compare all scores
-                for sub_id, chain_score in latest_chain_scores.items():
-                    db_score = db_scores.get(sub_id)
-                    if db_score is not None and abs(chain_score - float(db_score)) > 0.01:
-                        return True 
+            target_scores = db_scores if student_username else latest_chain_scores
+            for sub_id, db_score in db_scores.items():
+                chain_score = latest_chain_scores.get(sub_id)
+                if chain_score is not None and abs(chain_score - float(db_score)) > 0.01:
+                    print(f"🚨 TAMPER BUG FOUND (Score): DB says {db_score}, Chain says {chain_score}")
+                    return True 
         
-        # Test B: Activity Details (Title)
+        # Test B: Activity Details (Title) - Now Case-Insensitive!
         if check_title:
             if latest_chain_title and db_activity:
-                if latest_chain_title != db_activity['title']:
+                chain_clean = latest_chain_title.strip().lower()
+                db_clean = db_activity['title'].strip().lower()
+                if chain_clean != db_clean:
+                    print(f"🚨 TAMPER BUG FOUND (Title): DB says '{db_clean}', Chain says '{chain_clean}'")
                     return True 
                 
         # Test C: Files
         if check_files:
             if db_files != chain_active_files:
+                print(f"🚨 TAMPER BUG FOUND (Files): DB has {len(db_files)}, Chain has {len(chain_active_files)}")
                 return True 
                 
         # Test D: Due Date
         if check_due_date:
             if latest_chain_due_date and db_activity and db_activity.get('due_date'):
                 if compare_dates_safely(latest_chain_due_date, db_activity['due_date']):
+                    print(f"🚨 TAMPER BUG FOUND (Date): Mismatch detected by translator.")
                     return True
 
         return False
