@@ -331,9 +331,13 @@
                 </p>
                 <hr style="border: 0; border-top: 2px solid #F1F5F9; margin-bottom: 40px;">
                 
-                <div id="document-text">
-                    {{ content|safe }}
-                </div>
+<div class="document-content">
+    
+    <div style="white-space: pre-wrap; font-family: 'Times New Roman', serif; line-height: 1.5; padding: 20px;">
+        {{ content | safe }}
+    </div>
+
+</div>
             </div>
         </div>
     </div>
