@@ -2274,7 +2274,7 @@ def send_all_reports(activity_id):
 
     return redirect(f'/lecturer/matrix_report/{activity_id}')
 
-# ====================== STUDENT RECEIVE REPORT (EMERGENCY OVERRIDE) ======================
+# ====================== STUDENT RECEIVE REPORT ======================
 @app.route('/student/my_reports/<int:course_id>')
 def student_reports(course_id):
     if 'username' not in session or session.get('role') != 'student':
@@ -2287,26 +2287,32 @@ def student_reports(course_id):
         db_conn = get_db()
         cursor = db_conn.cursor(dictionary=True)
 
+        # 1. Fetch User Data
         cursor.execute("SELECT fullname FROM users WHERE username = %s", (student_username,))
         user_data = cursor.fetchone()
 
+        # 2. Fetch Course Data
         cursor.execute("SELECT course_code, course_name FROM courses WHERE id = %s", (course_id,))
         course_data = cursor.fetchone()
 
-        # EMERGENCY FIX: Removes the strict course linkage causing the blank page. 
-        # This forces the dashboard to pull the student's reports based ONLY on their username.
+        # 3. The Safest Query: Direct link from shared_reports to submissions
         query = """
-            SELECT sr.*, s.activity_id, a.title 
+            SELECT sr.*, s.activity_id, s.file_name 
             FROM shared_reports sr
             JOIN submissions s ON sr.submission_id = s.submission_id
-            LEFT JOIN activities a ON s.activity_id = a.id
-            WHERE s.student_username = %s
+            WHERE s.student_username = %s AND s.course_id = %s
             ORDER BY sr.shared_on DESC
         """
-        cursor.execute(query, (student_username,))
-        reports = cursor.fetchall()
+        cursor.execute(query, (student_username, course_id))
+        fetched_reports = cursor.fetchall()
 
-        return render_template('student_reports.html', reports=reports, user=user_data, course=course_data)
+        # 🚨 THE FIX: Pass the data under multiple variables to bypass any HTML typos!
+        return render_template('student_reports.html', 
+                               reports=fetched_reports, 
+                               results=fetched_reports, 
+                               data=fetched_reports,
+                               user=user_data, 
+                               course=course_data)
 
     except Exception as e:
         import traceback
@@ -2315,6 +2321,7 @@ def student_reports(course_id):
     finally:
         if cursor: cursor.close()
         if db_conn: db_conn.close()
+            
 # ==========================================
 # NEW ROUTE: Student PDF Download
 # ==========================================
