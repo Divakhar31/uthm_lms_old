@@ -2451,12 +2451,15 @@ def originality_report(target_id):
         sidebar_matches = []
         char_marks = [0] * len(t_text)
 
-        for comp in comparisons:
+            for comp in comparisons:
             source_num = len(sidebar_matches) + 1
             sidebar_matches.append({'source_name': comp['other_sub']['fullname'], 'score': round(comp['score'], 1), 'sub_id': comp['other_sub']['submission_id']})
             for m in comp['matches']:
                 for i in range(m.a, m.a + m.size):
-                    if i < len(char_marks) and char_marks[i] == 0: char_marks[i] = source_num
+                    if i < len(char_marks) and char_marks[i] == 0: 
+                        # 🚨 THE FIX: Do not apply the highlight background to newlines!
+                        if t_text[i] not in ['\n', '\r']:
+                            char_marks[i] = source_num
 
         full_html_parts = []
         if len(t_text) > 0:
