@@ -31,13 +31,21 @@ from flask_bcrypt import Bcrypt
 
 def compare_dates_safely(blockchain_date_str, db_date_raw):
     try:
-        bc_dt = datetime.strptime(blockchain_date_str, '%Y-%m-%dT%H:%M')
+        from datetime import datetime
         
+        # 1. Clean the string and standardize to 16 chars (YYYY-MM-DD HH:MM)
+        # This safely ignores seconds or trailing spaces that cause crashes
+        clean_bc_str = str(blockchain_date_str).strip().replace('T', ' ')[:16]
+        bc_dt = datetime.strptime(clean_bc_str, '%Y-%m-%d %H:%M')
+        
+        # 2. Handle the DB date
         if isinstance(db_date_raw, str):
-            db_dt = datetime.strptime(db_date_raw, '%Y-%m-%d %H:%M:%S')
+            clean_db_str = str(db_date_raw).strip().replace('T', ' ')[:16]
+            db_dt = datetime.strptime(clean_db_str, '%Y-%m-%d %H:%M')
         else:
             db_dt = db_date_raw 
 
+        # 3. Compare them down to the minute
         if bc_dt.replace(second=0, microsecond=0) != db_dt.replace(second=0, microsecond=0):
             return True # REAL TAMPER DETECTED
         else:
@@ -45,7 +53,8 @@ def compare_dates_safely(blockchain_date_str, db_date_raw):
 
     except Exception as e:
         print(f"Date parsing error: {e}")
-        return True
+        # Return False so a formatting glitch doesn't lock a student out
+        return False
 
 def is_strong_password(password):
     """Checks if a password meets strict security criteria."""
