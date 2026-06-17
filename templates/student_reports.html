@@ -134,22 +134,14 @@
 </div>
 
 <script>
-    // 1. When page loads, hide any cards the student previously dismissed
-    document.addEventListener("DOMContentLoaded", function() {
-        document.querySelectorAll('.report-card').forEach(function(card) {
-            let subId = card.getAttribute('data-sub-id');
-            if (localStorage.getItem('dismissed_report_' + subId) === 'true') {
-                card.style.display = 'none';
-            }
-        });
-    });
+    // DELETED the DOMContentLoaded auto-hiding function so all reports force-show for the presentation!
 
-    // 2. The function to hide the card and save the preference in the browser
+    // Keep only the function to dismiss it temporarily during the live demo
     function dismissReport(btn, subId) {
         if (confirm('Hide this report from your dashboard? (Your lecturer can still view it).')) {
             let card = btn.closest('.report-card');
-            card.style.display = 'none'; // Hide it instantly
-            localStorage.setItem('dismissed_report_' + subId, 'true'); // Remember it's hidden
+            card.style.display = 'none'; 
+            // Removed localStorage here too just to be 100% safe for your demo
         }
     }
 </script>
