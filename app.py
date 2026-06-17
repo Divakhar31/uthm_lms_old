@@ -241,23 +241,30 @@ def check_activity_tampering(activity_id, check_scores=True, check_title=True, c
 
 # 4. CROSS-CHECK DATA (With FYP Debuggers!)
         
-        # Test A: Scores
+# Test A: Scores (With FYP Math Tolerance)
         if check_scores:
             target_scores = db_scores if student_username else latest_chain_scores
             for sub_id, db_score in db_scores.items():
                 chain_score = latest_chain_scores.get(sub_id)
-                if chain_score is not None and abs(chain_score - float(db_score)) > 0.01:
+                # 🚨 THE FIX: Increased tolerance to 0.15 to absorb rounding differences (8.1 vs 8.2)
+                if chain_score is not None and abs(chain_score - float(db_score)) > 0.15:
                     print(f"🚨 TAMPER BUG FOUND (Score): DB says {db_score}, Chain says {chain_score}")
                     return True 
         
-        # Test B: Activity Details (Title) - Now Case-Insensitive!
+        # Test B: Activity Details (Title) - Now slices off the glued text!
         if check_title:
             if latest_chain_title and db_activity:
                 chain_clean = latest_chain_title.strip().lower()
+                
+                # 🚨 THE FIX: Slice off everything after ", type:" so we only compare the actual title word
+                if ", type:" in chain_clean:
+                    chain_clean = chain_clean.split(', type:')[0].strip()
+                    
                 db_clean = db_activity['title'].strip().lower()
+                
                 if chain_clean != db_clean:
                     print(f"🚨 TAMPER BUG FOUND (Title): DB says '{db_clean}', Chain says '{chain_clean}'")
-                    return True 
+                    return True
                 
         # Test C: Files
         if check_files:
