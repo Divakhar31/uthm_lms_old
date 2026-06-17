@@ -3333,7 +3333,7 @@ def view_matrix_report(activity_id):
                 if score >= 0.05: 
                     matches.append({
                         'source_name': comp_sub['fullname'],
-                        'score': round(score * 100, 1)
+                        'score': round(score, 1)
                     })
             
             final_reports.append({
