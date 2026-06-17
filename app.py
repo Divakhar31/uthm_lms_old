@@ -86,7 +86,7 @@ def calculate_unified_similarity(text1, text2):
     # STEP 2: EXACT MATCH HIGHLIGHTING (The Heavy Lifter)
     # ==========================================
     # Only run the heavy text-highlighter if the documents actually share vocabulary!
-if tfidf_score > 1.0:
+    if tfidf_score > 1.0:
         import re 
         matcher = difflib.SequenceMatcher(is_junk, text1, text2) 
         
