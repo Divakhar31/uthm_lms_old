@@ -930,9 +930,11 @@ def student_view_individual_activities(course_id):
     # 3. Categorization & Submission Linking
     categorized_activities = {'Assignments': [], 'Projects': [], 'Labs': [], 'Other': []}
     
-    # Security Scan Variable
+    # Security Scan Variables
     any_activity_tampered = False
+    tampered_titles = [] 
     
+    # 🚨 Cleaned up the double-loop into a single, highly efficient loop
     for act in activities:
         # Relink Database Submissions
         cursor.execute("""
@@ -954,20 +956,10 @@ def student_view_individual_activities(course_id):
         else: categorized_activities['Other'].append(act)
 
         # --- SECURITY SCAN ---
-    any_activity_tampered = False
-    tampered_titles = [] # 🚨 NEW: List to hold the names of compromised activities
-    
-    for act in activities:
-        # Relink Database Submissions
-        # ... [Your existing submission linking code remains here] ...
-
-        # Categorize
-        # ... [Your existing categorization code remains here] ...
-
-        # Run the full-spectrum security scan
-        if check_activity_tampering(act['id'], check_scores=True, check_title=True, check_files=True, check_due_date=True):
+        # 🚨 THE FIX: Changed check_files to False so missing Render PDFs don't trigger the alarm
+        if check_activity_tampering(act['id'], check_scores=True, check_title=True, check_files=False, check_due_date=True):
             any_activity_tampered = True
-            tampered_titles.append(act['title']) # 🚨 NEW: Save the title if a hack is detected
+            tampered_titles.append(act['title'])
 
     cursor.close()
     db_conn.close()
@@ -980,9 +972,9 @@ def student_view_individual_activities(course_id):
                            categorized_activities=categorized_activities, 
                            now=datetime.now(),
                            db_tampered=any_activity_tampered,
-                           tampered_titles=tampered_titles # 🚨 NEW: Pass the titles to the template
+                           tampered_titles=tampered_titles
                           )
-
+    
 # ====================== SUBMIT ACTIVITY (FIXED FOR MULTI-FILE) ======================
 @app.route('/student/submit_activity', methods=['POST'])
 def student_submit_activity(): 
