@@ -84,19 +84,19 @@
             <a href="/student/dashboard/{{ session['username'] }}" class="btn-back">&larr; Back to Dashboard</a>
         </div>
 
-        {% if reports %}
+{% if reports %}
             <div class="report-grid">
                 {% for report in reports %}
-                <div class="report-card">
+                
+                <div class="report-card" data-sub-id="{{ report.submission_id }}">
+                    
                     <div>
-                    <div class="card-header">
-                        <div class="activity-name">{{ report.title | default('Activity #' ~ report.activity_id) }}</div>
-    
+                        <div class="card-header">
+                            <div class="activity-name">{{ report.title | default('Activity #' ~ report.activity_id) }}</div>
+                            
                             <div class="date-and-delete">
-                            <div class="date">{{ report.shared_on.strftime('%b %d, %Y') }}</div>
-                            <button type="button" class="btn-delete-report" title="Dismiss Report" onclick="dismissReport(this, '{{ report.submission_id }}');">✖</button>
-                        </div>
-                    </div>
+                                <div class="date">{{ report.shared_on.strftime('%b %d, %Y') }}</div>
+                                <button type="button" class="btn-delete-report" title="Dismiss Report" onclick="dismissReport(this, '{{ report.submission_id }}');">✖</button>
                             </div>
                         </div>
                         
