@@ -56,6 +56,10 @@ def is_strong_password(password):
     if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password): return False
     return True
 
+# 1. ADD THIS: The junk filter tells Python to ignore spaces, tabs, and newlines
+def is_junk(x):
+    return x in " \t\n\r"
+
 def calculate_unified_similarity(text1, text2):
     if not text1 or not text2:
         return 0.0, []
@@ -84,12 +88,11 @@ def calculate_unified_similarity(text1, text2):
     # Only run the heavy text-highlighter if the documents actually share vocabulary!
     if tfidf_score > 1.0:
         
-        # CRITICAL FIX: Removed `autojunk=False`. 
-        # This stops the algorithm from freezing on massive 10,000+ word PDFs!
-        matcher = difflib.SequenceMatcher(None, text1, text2) 
+        # 🚨 THE CRITICAL FIX: Replaced 'None' with 'is_junk'
+        matcher = difflib.SequenceMatcher(is_junk, text1, text2) 
         
         for match in matcher.get_matching_blocks():
-            # Increased threshold to 20 to ignore generic phrases like "In conclusion, the"
+            # Threshold of 20 is great for ignoring generic phrases
             if match.size > 20: 
                 total_matching_chars += match.size
                 significant_matches.append(match)
@@ -2459,7 +2462,18 @@ def originality_report(target_id):
             if current_source != 0: full_html_parts.append(f'<span class="match-source-{current_source}">{current_text}<sup class="source-tag">{current_source}</sup></span>')
             else: full_html_parts.append(current_text)
 
-        full_html = "".join(full_html_parts).replace('\n', '<br>')
+        # ==========================================
+        # 🚨 THE TEXT CLEANING FIX (STEP A)
+        # ==========================================
+        raw_html = "".join(full_html_parts)
+        
+        # 1. Shrink massive gaps (3 or more newlines) down to just 2 newlines
+        cleaned_html = re.sub(r'\n{3,}', '\n\n', raw_html)
+        
+        # 2. We DO NOT use .replace('\n', '<br>') anymore! 
+        # HTML <br> tags ruin original indents. We keep the raw '\n' characters 
+        # and let the CSS on the frontend handle the formatting perfectly.
+        full_html = cleaned_html
 
         # ---> CRITICAL FIX: Pass the activity_id to the HTML template! <---
         return render_template(
