@@ -41,8 +41,13 @@
         .report-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px -5px rgba(0,0,0,0.08); border-color: #BFDBFE; }
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px dashed #E2E8F0; padding-bottom: 15px; margin-bottom: 20px; }
         .activity-name { color: var(--text-main); font-size: 1.1em; font-weight: 700; line-height: 1.3; }
-        .date { color: var(--text-muted); font-size: 0.85em; font-weight: 500; white-space: nowrap; margin-left: 15px; }
         
+        /* 🚨 NEW: CSS for the Date and Delete Button layout */
+        .date-and-delete { display: flex; align-items: center; gap: 10px; }
+        .date { color: var(--text-muted); font-size: 0.85em; font-weight: 500; white-space: nowrap; }
+        .btn-delete-report { background: none; border: none; color: #CBD5E1; font-size: 1.2em; cursor: pointer; padding: 0; margin: 0; transition: color 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-delete-report:hover { color: #EF4444; }
+
         .score-circle { width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6em; font-weight: 800; color: white; margin: 0 auto 10px auto; font-family: 'Poppins', sans-serif; border: 4px solid white; }
         .score-high { background: linear-gradient(135deg, #EF4444, #B91C1C); box-shadow: 0 8px 15px rgba(239, 68, 68, 0.3); }
         .score-med  { background: linear-gradient(135deg, #F59E0B, #B45309); box-shadow: 0 8px 15px rgba(245, 158, 11, 0.3); }
@@ -86,7 +91,13 @@
                     <div>
                         <div class="card-header">
                             <div class="activity-name">{{ report.title | default('Activity #' ~ report.activity_id) }}</div>
-                            <div class="date">{{ report.shared_on.strftime('%b %d, %Y') }}</div>
+                            
+                            <div class="date-and-delete">
+                                <div class="date">{{ report.shared_on.strftime('%b %d, %Y') }}</div>
+                                <form action="/student/delete_report/{{ report.submission_id }}" method="POST" style="margin: 0; display: flex;">
+                                    <button type="submit" class="btn-delete-report" title="Delete Report" onclick="return confirm('Are you sure you want to delete this report? This cannot be undone.');">✖</button>
+                                </form>
+                            </div>
                         </div>
                         
                         <div class="score-circle 
