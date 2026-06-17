@@ -3444,3 +3444,55 @@ def logout():
 if __name__ == "__main__":
     print(app.url_map)
     app.run(debug=True)
+
+
+# ====================== FYP SYSTEM HEALER ======================
+@app.route('/admin/heal_system')
+def heal_system():
+    try:
+        import re
+        db_conn = get_db()
+        cursor = db_conn.cursor(dictionary=True)
+        
+        # Get all file records from the Database
+        cursor.execute("SELECT activity_id, student_username, file_name FROM submissions WHERE file_name IS NOT NULL")
+        all_submissions = cursor.fetchall()
+        
+        fixed_ghosts = 0
+        
+        for sub in all_submissions:
+            activity_chain = Blockchain(identifier=sub['activity_id'])
+            
+            # Find what the blockchain currently knows about this activity
+            chain_active_files = set()
+            for block in activity_chain.chain:
+                for log in block.get('logs', []):
+                    if log['event_type'] == 'FILE_UPLOAD':
+                        match = re.search(r"Student uploaded file:\s*(.+)", log['details'])
+                        if match:
+                            chain_active_files.add(match.group(1).strip())
+                    elif log['event_type'] == 'FILE_DELETE':
+                        match = re.search(r"Deleted file:\s*(.+)", log['details'])
+                        if match and match.group(1).strip() in chain_active_files:
+                            chain_active_files.remove(match.group(1).strip())
+                            
+            # HEAL GHOST FILES: If DB has it, but Blockchain doesn't, add it to the chain!
+            if sub['file_name'] not in chain_active_files:
+                activity_chain.new_log(
+                    sender=sub['student_username'],
+                    recipient=sub['activity_id'],
+                    event_type="FILE_UPLOAD",
+                    details=f"Student uploaded file: {sub['file_name']}"
+                )
+                activity_chain.new_block(activity_chain.proof_of_work(activity_chain.last_block['proof']))
+                fixed_ghosts += 1
+                
+        cursor.close()
+        db_conn.close()
+        
+        return f"<h1>System Healed!</h1><p>Successfully re-synced {fixed_ghosts} ghost files into the Blockchain ledger. You can now return to your dashboard and the alerts should be gone!</p>"
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return f"Error running healer: {e}"
