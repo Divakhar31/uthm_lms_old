@@ -89,14 +89,14 @@
                 {% for report in reports %}
                 <div class="report-card">
                     <div>
-                        <div class="card-header">
-                            <div class="activity-name">{{ report.title | default('Activity #' ~ report.activity_id) }}</div>
-                            
+                    <div class="card-header">
+                        <div class="activity-name">{{ report.title | default('Activity #' ~ report.activity_id) }}</div>
+    
                             <div class="date-and-delete">
-                                <div class="date">{{ report.shared_on.strftime('%b %d, %Y') }}</div>
-                                <form action="/student/delete_report/{{ report.submission_id }}" method="POST" style="margin: 0; display: flex;">
-                                    <button type="submit" class="btn-delete-report" title="Delete Report" onclick="return confirm('Are you sure you want to delete this report? This cannot be undone.');">✖</button>
-                                </form>
+                            <div class="date">{{ report.shared_on.strftime('%b %d, %Y') }}</div>
+                            <button type="button" class="btn-delete-report" title="Dismiss Report" onclick="dismissReport(this, '{{ report.submission_id }}');">✖</button>
+                        </div>
+                    </div>
                             </div>
                         </div>
                         
@@ -129,10 +129,30 @@
                 <h2 style="color: var(--text-main); font-family: 'Poppins', sans-serif; margin-top: 0;">No Reports Shared Yet</h2>
                 <p style="font-weight: 500;">When a lecturer reviews your assignment for <b>{{ course.course_code }}</b> and publishes the originality report, it will automatically appear here.</p>
             </div>
-        {% endif %}
-
+    {% endif %}
     </div>
 </div>
+
+<script>
+    // 1. When page loads, hide any cards the student previously dismissed
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.report-card').forEach(function(card) {
+            let subId = card.getAttribute('data-sub-id');
+            if (localStorage.getItem('dismissed_report_' + subId) === 'true') {
+                card.style.display = 'none';
+            }
+        });
+    });
+
+    // 2. The function to hide the card and save the preference in the browser
+    function dismissReport(btn, subId) {
+        if (confirm('Hide this report from your dashboard? (Your lecturer can still view it).')) {
+            let card = btn.closest('.report-card');
+            card.style.display = 'none'; // Hide it instantly
+            localStorage.setItem('dismissed_report_' + subId, 'true'); // Remember it's hidden
+        }
+    }
+</script>
 
 </body>
 </html>
