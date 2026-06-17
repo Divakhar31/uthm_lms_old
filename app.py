@@ -86,14 +86,24 @@ def calculate_unified_similarity(text1, text2):
     # STEP 2: EXACT MATCH HIGHLIGHTING (The Heavy Lifter)
     # ==========================================
     # Only run the heavy text-highlighter if the documents actually share vocabulary!
-    if tfidf_score > 1.0:
-        
-        # 🚨 THE CRITICAL FIX: Replaced 'None' with 'is_junk'
+if tfidf_score > 1.0:
+        import re 
         matcher = difflib.SequenceMatcher(is_junk, text1, text2) 
         
         for match in matcher.get_matching_blocks():
-            # Threshold of 20 is great for ignoring generic phrases
             if match.size > 20: 
+                # Extract the actual text that was matched
+                matched_text = text1[match.a : match.a + match.size]
+                
+                # SANITY CHECK: Does this match actually contain letters or numbers?
+                if not matched_text.strip():
+                    continue
+                    
+                # Strict check: Must contain at least one alphanumeric character
+                if not re.search(r'[a-zA-Z0-9]', matched_text):
+                    continue
+
+                # If it passes the checks, add it to the score!
                 total_matching_chars += match.size
                 significant_matches.append(match)
 
