@@ -3194,12 +3194,12 @@ def lecturer_blockchain_audit():
     return redirect(url_for('lecturer_dashboard_redirect'))
 
 # ====================== Plagiarism route (FIXED) ======================
-# 1. The Background Worker Function
 def background_plagiarism_worker(task_id, activity_id, submissions):
     try:
         final_reports = []
         total_subs = len(submissions)
         
+        # Keep your analyze_single function exactly as you had it
         def analyze_single(primary_sub):
             highest_score = 0.0
             matches = []
@@ -3226,70 +3226,57 @@ def background_plagiarism_worker(task_id, activity_id, submissions):
                 'matches': matches
             }
 
+        # 🚨 THE FIX: Process sequentially to avoid memory spikes
         completed_count = 0
+        for sub in submissions:
+            report = analyze_single(sub)
+            final_reports.append(report)
+            completed_count += 1
+            PLAGIARISM_TASKS[task_id]['progress'] = int((completed_count / total_subs) * 100)
         
-        import concurrent.futures
-        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-            futures = [executor.submit(analyze_single, sub) for sub in submissions]
-            for future in concurrent.futures.as_completed(futures):
-                final_reports.append(future.result())
-                completed_count += 1
-                
-                PLAGIARISM_TASKS[task_id]['progress'] = int((completed_count / total_subs) * 100)
-
         final_reports.sort(key=lambda x: x['student_name'])
-        
-# ==========================================
-        # DB SAVE FIX: Converting Numpy to Standard Float
-        # ==========================================
+
+        # 🚨 THE FIX: Atomic transaction ensures data consistency (Prevents Tamper Alerts)
+        db_conn = get_db()
+        cursor = db_conn.cursor()
         try:
-            db_conn = get_db()
-            cursor = db_conn.cursor()
+            db_conn.begin() 
+            
+            # 1. Update Database
             for report in final_reports:
-                
-                safe_score = float(report['overall_score']) 
-                
                 cursor.execute("""
                     UPDATE submissions 
                     SET plagiarism_score = %s 
                     WHERE submission_id = %s
-                """, (safe_score, report['primary_sub_id']))
-                
-            db_conn.commit()
+                """, (float(report['overall_score']), report['primary_sub_id']))
+            
+            # 2. Lock to Blockchain
+            from local_blockchain import Blockchain
+            activity_chain = Blockchain(identifier=activity_id)
+            for report in final_reports:
+                activity_chain.new_log(
+                    sender="SYSTEM_AUTO_CHECKER",
+                    recipient=activity_id,
+                    event_type="SCORE_LOCKED",
+                    details=f"Sub_ID:{report['primary_sub_id']} | Score:{float(report['overall_score'])}"
+                )
+            activity_chain.new_block(activity_chain.proof_of_work(activity_chain.last_block['proof']))
+            
+            db_conn.commit() 
+            print("✅ Data and Blockchain perfectly synced!")
+            
+        except Exception as e:
+            db_conn.rollback() # If it crashes, nothing is saved, no tamper alarm!
+            raise e
+        finally:
             cursor.close()
             db_conn.close()
-            print("✅ Scores successfully saved to database!")
-            
-            # ---> NEW BLOCKCHAIN IMPROVEMENT (SPECIFIC LOGS) <---
-            try:
-                from local_blockchain import Blockchain
-                activity_chain = Blockchain(identifier=activity_id)
-                
-                # Loop through and lock EVERY individual score!
-                for report in final_reports:
-                    safe_score = float(report['overall_score'])
-                    activity_chain.new_log(
-                        sender="SYSTEM_AUTO_CHECKER",
-                        recipient=activity_id,
-                        event_type="SCORE_LOCKED",
-                        # Strict format so we can parse it easily later:
-                        details=f"Sub_ID:{report['primary_sub_id']} | Score:{safe_score}"
-                    )
-                
-                activity_chain.new_block(activity_chain.proof_of_work(activity_chain.last_block['proof']))
-                print("⛓️ Blockchain: Specific Plagiarism Scores Locked.")
-            except Exception as chain_error:
-                print(f"Blockchain Error: {chain_error}")
-            # ------------------------------------
 
-        except Exception as db_e:
-            print(f"❌ Database save error: {db_e}")
-
-        # Mark as 100% complete and store the data temporarily
         PLAGIARISM_TASKS[task_id]['status'] = 'completed'
         PLAGIARISM_TASKS[task_id]['results'] = final_reports
 
     except Exception as e:
+        print(f"❌ Worker crashed: {e}")
         PLAGIARISM_TASKS[task_id]['status'] = 'error'
         PLAGIARISM_TASKS[task_id]['error'] = str(e)
 
