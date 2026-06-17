@@ -2274,7 +2274,7 @@ def send_all_reports(activity_id):
 
     return redirect(f'/lecturer/matrix_report/{activity_id}')
 
-# ====================== STUDENT RECEIVE REPORT (COURSE SPECIFIC) ======================
+# ====================== STUDENT RECEIVE REPORT (EMERGENCY OVERRIDE) ======================
 @app.route('/student/my_reports/<int:course_id>')
 def student_reports(course_id):
     if 'username' not in session or session.get('role') != 'student':
@@ -2287,25 +2287,23 @@ def student_reports(course_id):
         db_conn = get_db()
         cursor = db_conn.cursor(dictionary=True)
 
-        # 1. Fetch user details for the sidebar
         cursor.execute("SELECT fullname FROM users WHERE username = %s", (student_username,))
         user_data = cursor.fetchone()
 
-        # 2. Fetch specific course details for the page header
         cursor.execute("SELECT course_code, course_name FROM courses WHERE id = %s", (course_id,))
         course_data = cursor.fetchone()
 
-        # 3. THE REAL FIX: Reverting to your original, correct routing through 'activities'!
+        # EMERGENCY FIX: Removes the strict course linkage causing the blank page. 
+        # This forces the dashboard to pull the student's reports based ONLY on their username.
         query = """
-            SELECT sr.*, s.activity_id, a.title, c.course_code, c.course_name 
+            SELECT sr.*, s.activity_id, a.title 
             FROM shared_reports sr
             JOIN submissions s ON sr.submission_id = s.submission_id
-            JOIN activities a ON s.activity_id = a.id
-            JOIN courses c ON a.course_id = c.id
-            WHERE s.student_username = %s AND c.id = %s
+            LEFT JOIN activities a ON s.activity_id = a.id
+            WHERE s.student_username = %s
             ORDER BY sr.shared_on DESC
         """
-        cursor.execute(query, (student_username, course_id))
+        cursor.execute(query, (student_username,))
         reports = cursor.fetchall()
 
         return render_template('student_reports.html', reports=reports, user=user_data, course=course_data)
@@ -2317,7 +2315,6 @@ def student_reports(course_id):
     finally:
         if cursor: cursor.close()
         if db_conn: db_conn.close()
-
 # ==========================================
 # NEW ROUTE: Student PDF Download
 # ==========================================
