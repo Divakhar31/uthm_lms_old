@@ -3240,7 +3240,6 @@ def background_plagiarism_worker(task_id, activity_id, submissions):
         db_conn = get_db()
         cursor = db_conn.cursor()
         try:
-            db_conn.begin() 
             
             # 1. Update Database
             for report in final_reports:
@@ -3290,18 +3289,18 @@ def view_matrix_report(activity_id):
         db_conn = get_db()
         cursor = db_conn.cursor(dictionary=True)
         
-        # Fetch the lecturer's full name 
+        # 1. Fetch User and Activity Details
         cursor.execute("SELECT fullname FROM users WHERE username = %s", (session.get('username'),))
         current_user = cursor.fetchone()
 
-        # ---> THE NEW FIX: Fetch the Activity Title <---
         cursor.execute("SELECT title FROM activities WHERE id = %s", (activity_id,))
         activity_record = cursor.fetchone()
         activity_title = activity_record['title'] if activity_record else f"Activity #{activity_id}"
 
-        # Only fetch the MAXIMUM (latest) submission_id for each student
+        # 2. Fetch the latest submissions AND their existing plagiarism scores
+        # We don't recalculate similarity here anymore!
         cursor.execute("""
-            SELECT s.submission_id, s.extracted_text, s.student_username, s.plagiarism_score, u.fullname 
+            SELECT s.submission_id, s.student_username, s.plagiarism_score, u.fullname 
             FROM submissions s 
             JOIN users u ON s.student_username = u.username 
             WHERE s.submission_id IN (
@@ -3317,33 +3316,19 @@ def view_matrix_report(activity_id):
             flash('Not enough submissions to generate a report.', 'warning')
             return redirect(f'/lecturer/view_submissions/{activity_id}')
 
+        # 3. Build the report using PRE-SAVED scores from the DB
         final_reports = []
         for primary_sub in submissions:
-            matches = []
-            for comp_sub in submissions:
-                if primary_sub['submission_id'] == comp_sub['submission_id']:
-                    continue
-                t1 = primary_sub['extracted_text'] or ""
-                t2 = comp_sub['extracted_text'] or ""
-                score, _ = calculate_unified_similarity(t1, t2)
-                
-                if score >= 0.1:
-                    matches.append({
-                        'source_name': comp_sub['fullname'],
-                        'score': score,
-                        'sub_id': comp_sub['submission_id']
-                    })
-                    
             final_reports.append({
                 'student_name': primary_sub['fullname'],
                 'primary_sub_id': primary_sub['submission_id'],
-                'overall_score': primary_sub['plagiarism_score'] if primary_sub['plagiarism_score'] else 0.0, 
-                'matches': matches
+                # Use the score already calculated by your background worker
+                'overall_score': primary_sub['plagiarism_score'] or 0.0, 
+                'matches': [] # If you need detailed matches, fetch them from a separate 'matches' table
             })
 
         final_reports.sort(key=lambda x: x['student_name'])
         
-        # ---> PASS THE NEW TITLE VARIABLE TO HTML <---
         return render_template('plagiarism_report.html', 
                                results=final_reports, 
                                activity_id=activity_id,
@@ -3353,7 +3338,7 @@ def view_matrix_report(activity_id):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return f"System Error: {e}", 500
+        return "System Error: Failed to load report.", 500
     finally:
         if cursor: cursor.close()
         if db_conn: db_conn.close()
