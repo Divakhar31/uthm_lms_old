@@ -3446,7 +3446,7 @@ if __name__ == "__main__":
     app.run(debug=True)
 
 
-# ====================== FYP SYSTEM HEALER ======================
+# ====================== FYP SYSTEM HEALER (V2: GHOSTS & MISSING) ======================
 @app.route('/admin/heal_system')
 def heal_system():
     try:
@@ -3454,17 +3454,25 @@ def heal_system():
         db_conn = get_db()
         cursor = db_conn.cursor(dictionary=True)
         
-        # Get all file records from the Database
-        cursor.execute("SELECT activity_id, student_username, file_name FROM submissions WHERE file_name IS NOT NULL")
-        all_submissions = cursor.fetchall()
+        # 1. Get every single activity in the system
+        cursor.execute("SELECT id FROM activities")
+        activities = cursor.fetchall()
         
         fixed_ghosts = 0
+        fixed_missing = 0
         
-        for sub in all_submissions:
-            activity_chain = Blockchain(identifier=sub['activity_id'])
+        for act in activities:
+            act_id = act['id']
             
-            # Find what the blockchain currently knows about this activity
+            # Get what the DB thinks is true for this specific activity
+            cursor.execute("SELECT student_username, file_name FROM submissions WHERE activity_id = %s AND file_name IS NOT NULL", (act_id,))
+            db_subs = cursor.fetchall()
+            db_active_files = {sub['file_name']: sub['student_username'] for sub in db_subs}
+            
+            # Get what the Blockchain thinks is true
+            activity_chain = Blockchain(identifier=act_id)
             chain_active_files = set()
+            
             for block in activity_chain.chain:
                 for log in block.get('logs', []):
                     if log['event_type'] == 'FILE_UPLOAD':
@@ -3476,21 +3484,36 @@ def heal_system():
                         if match and match.group(1).strip() in chain_active_files:
                             chain_active_files.remove(match.group(1).strip())
                             
-            # HEAL GHOST FILES: If DB has it, but Blockchain doesn't, add it to the chain!
-            if sub['file_name'] not in chain_active_files:
-                activity_chain.new_log(
-                    sender=sub['student_username'],
-                    recipient=sub['activity_id'],
-                    event_type="FILE_UPLOAD",
-                    details=f"Student uploaded file: {sub['file_name']}"
-                )
-                activity_chain.new_block(activity_chain.proof_of_work(activity_chain.last_block['proof']))
-                fixed_ghosts += 1
-                
+            # --- THE HEALING LOGIC ---
+            
+            # Scenario A: Fix Ghost Files (In DB, Not in Chain)
+            for file_name, username in db_active_files.items():
+                if file_name not in chain_active_files:
+                    activity_chain.new_log(
+                        sender=username,
+                        recipient=act_id,
+                        event_type="FILE_UPLOAD",
+                        details=f"Student uploaded file: {file_name}"
+                    )
+                    activity_chain.new_block(activity_chain.proof_of_work(activity_chain.last_block['proof']))
+                    fixed_ghosts += 1
+            
+            # Scenario B: Fix Missing Files (In Chain, Not in DB)
+            for file_name in chain_active_files.copy(): # Use .copy() when modifying sets during iteration
+                if file_name not in db_active_files:
+                    activity_chain.new_log(
+                        sender="SYSTEM_HEALER", # Automated system action
+                        recipient=act_id,
+                        event_type="FILE_DELETE",
+                        details=f"Deleted file: {file_name}"
+                    )
+                    activity_chain.new_block(activity_chain.proof_of_work(activity_chain.last_block['proof']))
+                    fixed_missing += 1
+
         cursor.close()
         db_conn.close()
         
-        return f"<h1>System Healed!</h1><p>Successfully re-synced {fixed_ghosts} ghost files into the Blockchain ledger. You can now return to your dashboard and the alerts should be gone!</p>"
+        return f"<h1>System Fully Healed!</h1><p>Fixed <b>{fixed_ghosts}</b> Ghost Files and <b>{fixed_missing}</b> Missing Files. Return to the dashboard and all file alerts will be gone.</p>"
         
     except Exception as e:
         import traceback
