@@ -2428,6 +2428,40 @@ def student_download_report(submission_id):
         if cursor: cursor.close()
         if db_conn: db_conn.close()
 
+# ====================== DELETE ORIGINALITY REPORT ======================
+@app.route('/student/delete_report/<int:submission_id>', methods=['POST'])
+def student_delete_report(submission_id):
+    # Security check: Ensure a student is logged in
+    if 'username' not in session or session.get('role') != 'student':
+        return redirect('/')
+
+    db_conn = None
+    cursor = None
+
+    try:
+        db_conn = get_db()
+        cursor = db_conn.cursor()
+
+        # Delete the specific plagiarism report tied to this submission
+        # (Using the same table name 'plagiarism_reports' we verified earlier)
+        cursor.execute("DELETE FROM plagiarism_reports WHERE target_submission_id = %s", (submission_id,))
+        db_conn.commit()
+
+        flash('Report successfully removed from your dashboard.', 'success')
+
+    except Exception as e:
+        if db_conn:
+            db_conn.rollback()
+        import traceback
+        traceback.print_exc()
+        flash('Error: Could not delete the report. Please try again.', 'danger')
+    finally:
+        if cursor: cursor.close()
+        if db_conn: db_conn.close()
+
+    # Safely bounce the user back to the exact page they were just on
+    return redirect(request.referrer or url_for('student_dashboard'))
+
 # ====================== VIEW ORIGINALITY REPORT ======================
 @app.route('/lecturer/originality_report/<int:target_id>')
 @lecturer_required
