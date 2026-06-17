@@ -164,19 +164,24 @@ def filter_hash_block(block):
 # =================================================================
 # UNIVERSAL SECURITY ENGINE (Upgraded with Targeted Alarms & Due Dates!)
 # =================================================================
-def check_activity_tampering(activity_id, check_scores=True, check_title=True, check_files=True, check_due_date=False):
+def check_activity_tampering(activity_id, check_scores=True, check_title=True, check_files=True, check_due_date=False, student_username=None):
     try:
         import re
         db_conn = get_db()
         cursor = db_conn.cursor(dictionary=True)
         
         # 1. Fetch current DB Scores & Files
-        cursor.execute("SELECT submission_id, plagiarism_score, file_name FROM submissions WHERE activity_id = %s", (activity_id,))
+        # 🚨 THE FIX: Filter by student if a username is provided!
+        if student_username:
+            cursor.execute("SELECT submission_id, plagiarism_score, file_name FROM submissions WHERE activity_id = %s AND student_username = %s", (activity_id, student_username))
+        else:
+            cursor.execute("SELECT submission_id, plagiarism_score, file_name FROM submissions WHERE activity_id = %s", (activity_id,))
+            
         db_submissions = cursor.fetchall()
         db_scores = {sub['submission_id']: sub['plagiarism_score'] for sub in db_submissions if sub['plagiarism_score'] is not None}
         db_files = set(sub['file_name'] for sub in db_submissions if sub['file_name']) 
         
-        # 2. Fetch current DB Activity Details (Added due_date here)
+        # 2. Fetch current DB Activity Details
         cursor.execute("SELECT title, due_date FROM activities WHERE id = %s", (activity_id,))
         db_activity = cursor.fetchone()
 
@@ -187,11 +192,14 @@ def check_activity_tampering(activity_id, check_scores=True, check_title=True, c
         activity_chain = Blockchain(identifier=activity_id)
         latest_chain_scores = {}
         latest_chain_title = None
-        latest_chain_due_date = None # <--- NEW
+        latest_chain_due_date = None
         chain_active_files = set() 
 
         for block in activity_chain.chain:
             for log in block.get('logs', []):
+                
+                # 🚨 THE FIX: Check if the log belongs to our target student
+                is_student_log = (log.get('sender') == student_username) if student_username else True
                 
                 if log['event_type'] == 'SCORE_LOCKED':
                     match = re.search(r"Sub_ID:(\d+)\s*\|\s*Score:([\d\.]+)", log['details'])
@@ -199,38 +207,45 @@ def check_activity_tampering(activity_id, check_scores=True, check_title=True, c
                         latest_chain_scores[int(match.group(1))] = float(match.group(2))
                 
                 elif log['event_type'] in ['ACTIVITY_CREATED', 'ACTIVITY_EDITED']:
-                    # Extract Title
                     match_title = re.search(r"Title:\s*(.+?)(?:\s*\||$)", log['details'])
                     if match_title:
                         latest_chain_title = match_title.group(1).strip()
                     
-                    # Extract Due Date (e.g., "Title: Lab 1 | DueDate: 2026-12-31 23:59:00")
                     if "DueDate:" in log['details']:
                         try:
                             latest_chain_due_date = log['details'].split("DueDate:")[1].strip()
                         except IndexError:
                             pass
-                        
-                elif log['event_type'] == 'FILE_UPLOAD':
+                            
+                # 🚨 THE FIX: Only track the file if it belongs to the target student!
+                elif log['event_type'] == 'FILE_UPLOAD' and is_student_log:
                     match = re.search(r"Student uploaded file:\s*(.+)", log['details'])
                     if match:
                         chain_active_files.add(match.group(1).strip())
                         
-                elif log['event_type'] == 'FILE_DELETE':
+                elif log['event_type'] == 'FILE_DELETE' and is_student_log:
                     match = re.search(r"Deleted file:\s*(.+)", log['details'])
                     if match:
                         filename_to_remove = match.group(1).strip()
                         if filename_to_remove in chain_active_files:
                             chain_active_files.remove(filename_to_remove)
 
-        # 4. CROSS-CHECK DATA (Targeted by Parameters)
+        # 4. CROSS-CHECK DATA 
         
         # Test A: Scores
         if check_scores:
-            for sub_id, chain_score in latest_chain_scores.items():
-                db_score = db_scores.get(sub_id)
-                if db_score is not None and abs(chain_score - float(db_score)) > 0.01:
-                    return True 
+            if student_username:
+                # Local Scan: Only compare scores for this specific student's submissions
+                for sub_id, db_score in db_scores.items():
+                    chain_score = latest_chain_scores.get(sub_id)
+                    if chain_score is not None and abs(chain_score - float(db_score)) > 0.01:
+                        return True 
+            else:
+                # Global Scan: Compare all scores
+                for sub_id, chain_score in latest_chain_scores.items():
+                    db_score = db_scores.get(sub_id)
+                    if db_score is not None and abs(chain_score - float(db_score)) > 0.01:
+                        return True 
         
         # Test B: Activity Details (Title)
         if check_title:
@@ -243,17 +258,18 @@ def check_activity_tampering(activity_id, check_scores=True, check_title=True, c
             if db_files != chain_active_files:
                 return True 
                 
-        # Test D: Due Date (NEW)
+        # Test D: Due Date
         if check_due_date:
             if latest_chain_due_date and db_activity and db_activity.get('due_date'):
-                # Use the new safe function instead of strict string comparison
                 if compare_dates_safely(latest_chain_due_date, db_activity['due_date']):
                     return True
 
         return False
         
     except Exception as e:
-        print(f"Global Tamper Check Error for Activity {activity_id}: {e}")
+        import traceback
+        traceback.print_exc()
+        print(f"Tamper Check Error for Activity {activity_id}: {e}")
         return False
     
 # =================================================================
@@ -957,7 +973,7 @@ def student_view_individual_activities(course_id):
 
         # --- SECURITY SCAN ---
         # 🚨 THE FIX: Changed check_files to False so missing Render PDFs don't trigger the alarm
-        if check_activity_tampering(act['id'], check_scores=True, check_title=True, check_files=False, check_due_date=True):
+        if check_activity_tampering(act['id'], check_scores=True, check_title=True, check_files=False, check_due_date=True, student_username=session.get('username')):
             any_activity_tampered = True
             tampered_titles.append(act['title'])
 
