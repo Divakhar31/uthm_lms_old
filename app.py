@@ -1605,31 +1605,26 @@ def lecturer_view_individual_activities(course_id):
         else: categorized_activities['Other'].append(act)
 
     # ---> THE NEW DASHBOARD FIX: Smart Un-Muting <---
+# ---> THE NEW DASHBOARD FIX: Smart Un-Muting <---
     any_activity_tampered = False
     hacked_activities = [] 
 
     if activities:
         for act in activities:
-            # 1. Check if the activity is tampered
-            if check_activity_tampering(act['id'], check_scores=False, check_title=True, check_files=True, check_due_date=True):
+            # 🚨 THE FIX: Changed check_scores=True so it catches the Project 2 score hack!
+            if check_activity_tampering(act['id'], check_scores=True, check_title=True, check_files=True, check_due_date=True):
                 
                 # 2. Calculate how many alerts exist RIGHT NOW for this activity
-                # We need a quick way to count the errors. For now, we will simulate a count 
-                # by re-running a slightly more detailed check, or by simply assuming that if 
-                # check_activity_tampering returns True, there is at least 1 error.
-                
-                # To make this truly robust, we should calculate the exact number of errors.
-                # Let's run a quick "mini-audit" to get the exact count of current errors:
                 current_error_count = get_tamper_alert_count(act['id']) 
                 
                 # 3. Check against the acknowledged table
-                acknowledged_count = acknowledged_data.get(act['id'], 0) # Defaults to 0 if never acknowledged
+                acknowledged_count = acknowledged_data.get(act['id'], 0) 
                 
-                # 🚨 THE CRITICAL FIX: Only trigger the banner if the current errors are GREATER than the acknowledged errors!
+                # 4. Trigger the banner if current errors exceed acknowledged errors
                 if current_error_count > acknowledged_count:
                     any_activity_tampered = True
                     hacked_activities.append({'id': act['id'], 'title': act['title']})
-
+                    
     return render_template('individual_activity_lecturer.html',
                            user=user,         
                            course=course,     
